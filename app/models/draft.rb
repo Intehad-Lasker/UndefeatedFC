@@ -19,7 +19,7 @@ class Draft < ApplicationRecord
   validates :wins, :losses, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   validates :overall, :wins, :losses, :completed_at, presence: true, if: :completed?
 
-  scope :with_rounds, -> { includes(rounds: %i[weight_class era fighter]) }
+  scope :with_rounds, -> { includes(:daily_challenge, rounds: %i[weight_class era fighter]) }
 
   # Adds picks_made to each draft in one grouped query (for lists of drafts).
   scope :with_pick_counts, -> {

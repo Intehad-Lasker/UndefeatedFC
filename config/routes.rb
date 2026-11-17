@@ -16,6 +16,9 @@ Rails.application.routes.draw do
         resources :picks, only: :create
       end
       resources :fighters, only: %i[index show]
+      resource :daily_challenge, only: :show do
+        resource :attempt, only: :create, controller: "daily_challenge_attempts"
+      end
     end
   end
 
