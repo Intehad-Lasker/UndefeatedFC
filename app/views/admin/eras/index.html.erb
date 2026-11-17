@@ -1,0 +1,15 @@
+<% content_for :title, "Eras" %>
+<h1>Eras</h1>
+<table>
+  <thead><tr><th>Era</th><th>From</th><th>To</th><th></th></tr></thead>
+  <tbody>
+    <% @eras.each do |era| %>
+      <tr id="<%= dom_id(era) %>">
+        <td><%= era.name %></td>
+        <td><%= era.starts_on %></td>
+        <td><%= era.ends_on || "ongoing" %></td>
+        <td><%= link_to "Edit", edit_admin_era_path(era) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

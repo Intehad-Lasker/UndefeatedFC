@@ -15,6 +15,8 @@
       <nav class="admin__nav">
         <%= link_to "Dashboard", admin_root_path %>
         <%= link_to "Fighters", admin_fighters_path %>
+        <%= link_to "Weight classes", admin_weight_classes_path %>
+        <%= link_to "Eras", admin_eras_path %>
       </nav>
       <% if Current.user %>
         <span class="admin__user">
