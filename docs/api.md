@@ -155,6 +155,32 @@ same six spins. Each browser and each account gets one attempt per day (UTC),
 enforced by partial unique indexes. Challenge drafts include
 `"daily_challenge": { "day": ... }` in the draft response.
 
+### Leaderboards
+
+| Method and path | Result |
+|---|---|
+| `GET /api/v1/leaderboards/daily` | Today's challenge standings; `?day=YYYY-MM-DD` for another day (`404` if none, `400` if malformed) |
+| `GET /api/v1/leaderboards/all_time` | Each player's best finished run |
+
+```json
+{ "day": "2026-11-17", "entries": [
+  { "rank": 1, "draft_id": "...", "display_name": "LivePlayer", "wins": 14, "losses": 1, "record": "14-1",
+    "overall": 90, "undefeated": false, "completed_at": "..." }
+] }
+```
+
+Only signed-in players' finished drafts appear. Ranking is wins, then overall,
+with ties sharing a rank (`RANK()`); the earlier finish is listed first. Both
+endpoints are publicly cacheable with ETags, and rankings are cached in Solid
+Cache until the board changes.
+
+### Live updates (Action Cable)
+
+Connect to `/cable` and subscribe to `LeaderboardChannel` with
+`{ "board": "daily" }` or `{ "board": "all_time" }`. When a board changes you
+receive `{ "board": "daily", "day": "2026-11-17" }` (or `{ "board": "all_time" }`):
+refetch that leaderboard. Guests may connect.
+
 ## Example session
 
 ```bash
