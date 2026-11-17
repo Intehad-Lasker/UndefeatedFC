@@ -1,13 +1,15 @@
 import { useParams } from 'react-router'
 import { useMeta } from '../api/useMeta.js'
 import FighterPool from '../components/FighterPool.jsx'
+import SlotBoard from '../components/SlotBoard.jsx'
 import SpinWheels from '../components/SpinWheels.jsx'
+import { selectedFighter } from '../draft/draftReducer.js'
 import { useDraft } from '../draft/useDraft.js'
 
 export default function DraftPage() {
   const { draftId } = useParams()
   const meta = useMeta()
-  const { state, spin, finishReveal, selectFighter } = useDraft(draftId)
+  const { state, spin, finishReveal, selectFighter, pick } = useDraft(draftId)
   const { draft, phase, error } = state
 
   if (phase === 'error') {
@@ -32,6 +34,15 @@ export default function DraftPage() {
         <h1>{phase === 'complete' ? 'Title run complete' : `Round ${Math.min(picksMade + 1, meta.rules.rounds)} of ${meta.rules.rounds}`}</h1>
         {!draft.owned && <p className="notice">You're viewing someone else's draft.</p>}
       </header>
+
+      <SlotBoard
+        slots={draft.slots}
+        skills={meta.skills}
+        selectedFighter={selectedFighter(state)}
+        onPick={pick}
+        disabled={!draft.owned || phase !== 'picking'}
+        lastPickSlot={state.lastPick?.slot}
+      />
 
       <SpinWheels
         weightClasses={meta.weight_classes}

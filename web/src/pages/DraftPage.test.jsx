@@ -1,9 +1,9 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { api } from '../api/client.js'
 import { resetMetaForTests } from '../api/useMeta.js'
-import { draftPicking, draftReady, meta } from '../test/fixtures.js'
+import { draftPicking, draftReady, fighter, meta } from '../test/fixtures.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
 vi.mock('../api/client.js', () => ({ api: { meta: vi.fn(), getDraft: vi.fn(), spin: vi.fn(), pick: vi.fn() } }))
@@ -71,4 +71,35 @@ test('the open round shows its pool and lets the owner select a fighter', async 
   await userEvent.click(ace)
 
   expect(ace).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('picking a fighter into a slot reveals their rating and readies the next spin', async () => {
+  const afterPick = {
+    ...draftReady,
+    rounds: [{ ...draftPicking.open_round, picked: true, slot: 'power', rating: 88, fighter: fighter(7, 'Ace Ardent') }],
+    slots: [draftReady.slots[0], { ...draftReady.slots[1], round_number: 1, rating: 88, fighter: fighter(7, 'Ace Ardent') }],
+  }
+  vi.mocked(api.getDraft).mockResolvedValue(draftPicking)
+  vi.mocked(api.pick).mockResolvedValue(afterPick)
+  renderRoute('/drafts/d1')
+
+  await userEvent.click(await screen.findByRole('button', { name: /Ace Ardent/ }))
+  await userEvent.click(screen.getAllByRole('button', { name: 'Put Ace Ardent here' })[1])
+
+  expect(api.pick).toHaveBeenCalledWith('d1', 7, 'power')
+  expect(await screen.findByLabelText('Power rating')).toHaveTextContent('88')
+  expect(screen.getByRole('button', { name: 'Spin' })).toBeEnabled()
+})
+
+test('a refused pick keeps the pool open and shows why', async () => {
+  vi.mocked(api.getDraft).mockResolvedValue(draftPicking)
+  vi.mocked(api.pick).mockRejectedValue(new Error('Your Power slot is already filled.'))
+  renderRoute('/drafts/d1')
+
+  await userEvent.click(await screen.findByRole('button', { name: /Bea Garrow/ }))
+  await userEvent.click(screen.getAllByRole('button', { name: 'Put Bea Garrow here' })[1])
+
+  expect(await screen.findByRole('alert')).toHaveTextContent('Your Power slot is already filled.')
+  const pool = screen.getByRole('list', { name: 'Fighters in this pool' })
+  expect(within(pool).getByRole('button', { name: /Bea Garrow/ })).toHaveAttribute('aria-pressed', 'true')
 })
