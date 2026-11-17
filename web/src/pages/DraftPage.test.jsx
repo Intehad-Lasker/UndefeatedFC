@@ -4,15 +4,15 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { api } from '../api/client.js'
 import { resetMetaForTests } from '../api/useMeta.js'
 import { draftCompleted, draftPicking, draftReady, fighter, meta } from '../test/fixtures.js'
+import { stubDefaults } from '../test/apiMock.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
-vi.mock('../api/client.js', () => ({
-  api: { meta: vi.fn(), getDraft: vi.fn(), spin: vi.fn(), pick: vi.fn(), createDraft: vi.fn() },
-}))
+vi.mock('../api/client.js', async () => (await import('../test/apiMock.js')).apiMock())
 
 beforeEach(() => {
   vi.resetAllMocks()
   resetMetaForTests()
+  stubDefaults(api)
   vi.mocked(api.meta).mockResolvedValue(meta)
 })
 

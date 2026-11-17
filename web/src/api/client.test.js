@@ -104,3 +104,26 @@ test('prefers the CSRF-TOKEN cookie, which always matches the current session co
 
   expect(fetchMock.mock.calls[1][1].headers['X-CSRF-Token']).toBe('from+cookie')
 })
+
+test('validation errors carry per-field messages', async () => {
+  fetchMock
+    .mockReturnValueOnce(reply(200, {}, { 'X-CSRF-Token': 't' }))
+    .mockReturnValueOnce(
+      reply(422, { error: { code: 'validation_failed', message: 'Display name has already been taken', fields: { display_name: ['taken'] } } }),
+    )
+
+  const error = await api.signUp({ display_name: 'x' }).catch((e) => e)
+
+  expect(error.fields).toEqual({ display_name: ['taken'] })
+})
+
+test('sign out sends a DELETE with the CSRF token', async () => {
+  fetchMock
+    .mockReturnValueOnce(reply(200, {}, { 'X-CSRF-Token': 'del' }))
+    .mockReturnValueOnce(Promise.resolve(new Response(null, { status: 204 })))
+
+  await api.signOut()
+
+  const [url, options] = fetchMock.mock.calls[1]
+  expect([url, options.method, options.headers['X-CSRF-Token']]).toEqual(['/api/v1/session', 'DELETE', 'del'])
+})

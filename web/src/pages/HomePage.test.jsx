@@ -2,13 +2,14 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { api } from '../api/client.js'
+import { stubDefaults } from '../test/apiMock.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
-vi.mock('../api/client.js', () => ({ api: { createDraft: vi.fn() } }))
+vi.mock('../api/client.js', async () => (await import('../test/apiMock.js')).apiMock())
 
-// Braces matter: a function returned from beforeEach runs as teardown.
 beforeEach(() => {
-  vi.mocked(api.createDraft).mockReset()
+  vi.resetAllMocks()
+  stubDefaults(api)
 })
 
 test('explains the game and offers to start a draft', () => {

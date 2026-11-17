@@ -15,11 +15,12 @@ function currentCsrfToken() {
 }
 
 export class ApiError extends Error {
-  constructor(status, code, message) {
+  constructor(status, code, message, fields = {}) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.code = code
+    this.fields = fields // per-field messages from validation errors
   }
 }
 
@@ -46,6 +47,7 @@ async function send(method, path, body) {
       response.status,
       error?.code ?? 'http_error',
       error?.message ?? `Something went wrong (HTTP ${response.status}).`,
+      error?.fields,
     )
   }
   return data
@@ -53,6 +55,11 @@ async function send(method, path, body) {
 
 function get(path) {
   return send('GET', path)
+}
+
+async function destroy(path) {
+  if (!currentCsrfToken()) await get('/meta')
+  return send('DELETE', path)
 }
 
 // Writes need a CSRF token; fetch one first if this tab has not made a request yet.
@@ -69,6 +76,12 @@ export const api = {
   pick: (draftId, fighterId, slot) => post(`/drafts/${draftId}/picks`, { pick: { fighter_id: fighterId, slot } }),
   searchFighters: (query) => get(`/fighters?q=${encodeURIComponent(query)}`),
   getFighter: (id) => get(`/fighters/${id}`),
+  currentSession: () => get('/session'),
+  signIn: (emailAddress, password) => post('/session', { email_address: emailAddress, password }),
+  signUp: (user) => post('/users', { user }),
+  signOut: () => destroy('/session'),
+  requestPasswordReset: (emailAddress) => post('/passwords', { email_address: emailAddress }),
+  myDrafts: () => get('/drafts'),
 }
 
 // Test hook: forget the token between tests.
