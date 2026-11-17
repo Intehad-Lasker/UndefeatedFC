@@ -98,4 +98,17 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
     spectator.post "/api/v1/matches/#{id}/join"
     assert_equal 422, spectator.response.status
   end
+
+  test "a new browser's page-load reads never mint a player id" do
+    match = Match.create!
+    fresh = open_session
+
+    # The calls a first page load makes. If any of them minted an id, parallel
+    # requests could each set a different cookie and swap the browser's identity.
+    [ "/api/v1/meta", "/api/v1/session", "/api/v1/daily_challenge", "/api/v1/drafts/#{drafts(:fresh).id}",
+      "/api/v1/matches/#{match.id}" ].each do |path|
+      fresh.get path
+      assert_nil fresh.cookies[:player_id].presence, "#{path} minted a player id"
+    end
+  end
 end

@@ -57,7 +57,7 @@ class Match < ApplicationRecord
   end
 
   def player_for(player_id: nil, user: nil)
-    players.find { |player| (user && player.user_id == user.id) || (player_id && player.player_id == player_id) }
+    players.find { |player| (user && player.user_id == user.id) || (player_id.present? && player.player_id == player_id) }
   end
 
   def picks_for(seat) = picks.select { |pick| pick.seat == seat }

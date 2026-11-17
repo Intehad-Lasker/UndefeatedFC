@@ -29,6 +29,7 @@ class DailyChallenge < ApplicationRecord
   # browser's (even if an account has since claimed it, since the browser
   # already used its one attempt).
   def attempt_for(player_id:, user: nil)
+    return nil if player_id.nil? && user.nil?
     return drafts.find_by(player_id: player_id) unless user
 
     drafts.find_by(user: user) || drafts.find_by(player_id: player_id, user_id: nil)

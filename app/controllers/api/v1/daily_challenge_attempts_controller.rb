@@ -8,7 +8,7 @@ module Api
       def create
         challenge = DailyChallenge.today
         existing = challenge.attempt_for(player_id: current_player_id, user: current_user)
-        attempt = existing || challenge.attempt!(player_id: current_player_id, user: current_user)
+        attempt = existing || challenge.attempt!(player_id: current_player_id!, user: current_user)
         render_draft(attempt.id, status: existing ? :ok : :created)
       end
     end

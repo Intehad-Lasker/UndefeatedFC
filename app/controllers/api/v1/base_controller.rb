@@ -3,8 +3,9 @@ module Api
     # Parent of every JSON endpoint.
     #
     # - Errors always come back as { "error": { "code": ..., "message": ... } }.
-    # - Each browser gets an anonymous player id in a signed, HTTP-only cookie;
-    #   only that player can change the drafts they start.
+    # - A browser gets an anonymous player id in a signed, HTTP-only cookie the
+    #   first time it creates something; only that player can change the
+    #   drafts they start.
     # - CSRF protection stays on. The current token is sent on every response in
     #   the X-CSRF-Token header, and the React app echoes it back on writes.
     class BaseController < ActionController::Base
@@ -45,8 +46,17 @@ module Api
 
       private
 
+      # The browser's anonymous player id, if it has one. Reading never creates
+      # one: a new browser's first page load fires several requests at once, and
+      # if each minted an id the browser would keep only the last cookie,
+      # orphaning anything created under the others. Only actions that create
+      # something call current_player_id!, which mints the id if needed.
       def current_player_id
-        @current_player_id ||= cookies.signed[PLAYER_COOKIE] || assign_player_id
+        @current_player_id ||= cookies.signed[PLAYER_COOKIE]
+      end
+
+      def current_player_id!
+        current_player_id || (@current_player_id = assign_player_id)
       end
 
       def assign_player_id

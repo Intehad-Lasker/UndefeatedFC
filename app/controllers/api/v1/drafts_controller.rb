@@ -20,7 +20,7 @@ module Api
       end
 
       def create
-        draft = Draft.create!(player_id: current_player_id, user: current_user)
+        draft = Draft.create!(player_id: current_player_id!, user: current_user)
         render_draft(draft.id, status: :created)
       end
 

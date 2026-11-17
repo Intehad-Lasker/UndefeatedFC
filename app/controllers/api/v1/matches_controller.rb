@@ -9,7 +9,7 @@ module Api
         with: -> { render_error :too_many_requests, "rate_limited", "You're starting matches too quickly. Try again in a minute." }
 
       def create
-        match = Matches::Creator.new(player_id: current_player_id, user: current_user).call
+        match = Matches::Creator.new(player_id: current_player_id!, user: current_user).call
         render_match(match.id, status: :created)
       end
 
@@ -18,7 +18,7 @@ module Api
       end
 
       def join
-        Matches::Joiner.new(Match.find(params[:id]), player_id: current_player_id, user: current_user).call
+        Matches::Joiner.new(Match.find(params[:id]), player_id: current_player_id!, user: current_user).call
         render_match(params[:id])
       end
 
