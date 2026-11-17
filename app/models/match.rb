@@ -28,6 +28,14 @@ class Match < ApplicationRecord
 
   def self.round_for_pick(number) = (number + 1) / 2
 
+  # Locks the match row (SELECT ... FOR UPDATE) and reloads players and picks,
+  # so two players' simultaneous requests are handled one after the other.
+  def lock_with_everything!
+    lock!
+    ActiveRecord::Associations::Preloader.new(records: [ self ], associations: [ :players, { picks: :fighter } ]).call
+    self
+  end
+
   # The helpers below read loaded players and picks (use .with_everything).
 
   def next_pick_number = picks.size + 1
