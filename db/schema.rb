@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_230529) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_231246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -197,6 +197,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_230529) do
     t.check_constraint "status::text = ANY (ARRAY['running'::character varying, 'succeeded'::character varying, 'failed'::character varying]::text[])", name: "ingestion_runs_status_known"
   end
 
+  create_table "match_picks", force: :cascade do |t|
+    t.uuid "match_id", null: false
+    t.integer "number", null: false
+    t.integer "seat", null: false
+    t.bigint "fighter_id", null: false
+    t.string "slot", null: false
+    t.integer "rating", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id", "fighter_id"], name: "index_match_picks_on_match_id_and_fighter_id", unique: true
+    t.index ["match_id", "number"], name: "index_match_picks_on_match_id_and_number", unique: true
+    t.index ["match_id", "seat", "slot"], name: "index_match_picks_on_match_id_and_seat_and_slot", unique: true
+    t.check_constraint "number >= 1 AND number <= 12", name: "match_picks_number_range"
+    t.check_constraint "rating >= 0 AND rating <= 99", name: "match_picks_rating_range"
+    t.check_constraint "seat = ANY (ARRAY[1, 2])", name: "match_picks_seat"
+  end
+
+  create_table "match_players", force: :cascade do |t|
+    t.uuid "match_id", null: false
+    t.integer "seat", null: false
+    t.uuid "player_id", null: false
+    t.bigint "user_id"
+    t.string "display_name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id", "player_id"], name: "index_match_players_on_match_id_and_player_id", unique: true
+    t.index ["match_id", "seat"], name: "index_match_players_on_match_id_and_seat", unique: true
+    t.index ["user_id"], name: "index_match_players_on_user_id"
+    t.check_constraint "seat = ANY (ARRAY[1, 2])", name: "match_players_seat"
+  end
+
+  create_table "matches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "seed", null: false
+    t.string "status", default: "waiting", null: false
+    t.jsonb "pools", default: [], null: false
+    t.integer "winner_seat"
+    t.jsonb "result", default: {}, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.check_constraint "status::text = ANY (ARRAY['waiting'::character varying, 'drafting'::character varying, 'completed'::character varying]::text[])", name: "matches_status_known"
+    t.check_constraint "winner_seat = ANY (ARRAY[1, 2])", name: "matches_winner_seat"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "ip_address"
@@ -240,5 +284,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_230529) do
   add_foreign_key "drafts", "daily_challenges"
   add_foreign_key "drafts", "users", on_delete: :nullify
   add_foreign_key "fighter_ratings", "fighters"
+  add_foreign_key "match_picks", "fighters"
+  add_foreign_key "match_picks", "matches", on_delete: :cascade
+  add_foreign_key "match_players", "matches", on_delete: :cascade
+  add_foreign_key "match_players", "users", on_delete: :nullify
   add_foreign_key "sessions", "users"
 end
