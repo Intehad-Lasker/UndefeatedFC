@@ -2,6 +2,7 @@ require "test_helper"
 
 class Drafts::ScorerTest < ActiveSupport::TestCase
   include DraftBuilder
+  include ActiveJob::TestHelper
 
   test "averages the six slot ratings into the overall" do
     draft = build_draft(ratings: [ 90, 80, 70, 60, 50, 40 ])
@@ -32,6 +33,25 @@ class Drafts::ScorerTest < ActiveSupport::TestCase
     end
 
     assert_equal 1, records.uniq.size
+  end
+
+  test "queues a leaderboard broadcast for the finished draft" do
+    draft = build_draft(ratings: [ 80 ] * 6)
+
+    assert_enqueued_with(job: LeaderboardBroadcastJob, args: [ draft.id ]) do
+      Drafts::Scorer.new(draft).call
+    end
+  end
+
+  test "nothing is broadcast if the transaction rolls back" do
+    draft = build_draft(ratings: [ 80 ] * 6)
+
+    assert_no_enqueued_jobs(only: LeaderboardBroadcastJob) do
+      Draft.transaction do
+        Drafts::Scorer.new(draft).call
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   test "refuses to score a draft with an empty slot" do

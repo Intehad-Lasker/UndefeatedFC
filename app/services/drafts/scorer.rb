@@ -19,6 +19,10 @@ module Drafts
         status: :completed, overall: overall, wins: result.wins, losses: result.losses,
         fight_log: result.fights.map(&:to_h), completed_at: Time.current
       )
+      # Only announce the result once it is committed; a rolled-back pick must
+      # never reach anyone's leaderboard.
+      draft_id = @draft.id
+      ActiveRecord.after_all_transactions_commit { LeaderboardBroadcastJob.perform_later(draft_id) }
       result
     end
   end

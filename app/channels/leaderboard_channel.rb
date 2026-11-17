@@ -6,6 +6,10 @@ class LeaderboardChannel < ApplicationCable::Channel
 
   def self.stream_for_board(board) = "leaderboard:#{board}"
 
+  def self.broadcast_to_board(board, **details)
+    ActionCable.server.broadcast(stream_for_board(board), { board: board, **details })
+  end
+
   def subscribed
     board = params[:board].to_s
     return reject unless BOARDS.include?(board)
