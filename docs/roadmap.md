@@ -24,9 +24,9 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Command-line interface and CI
 
 ## M3 — Ratings engine
-- [ ] Six skills: Striking, Power, Wrestling, Submissions, Defense, Chin
-- [ ] Percentile ratings with small-sample shrinkage
-- [ ] Background refresh after each ingestion run
+- [x] Six skills: Striking, Power, Wrestling, Submissions, Defense, Chin
+- [x] Percentile ratings with small-sample shrinkage
+- [x] Background refresh after each ingestion run
 
 ## M4 — Draft engine
 - [ ] Fighter pools by weight class and era

@@ -10,6 +10,7 @@ class IngestionRun < ApplicationRecord
   validate :finishes_after_start
 
   scope :recent_first, -> { order(started_at: :desc) }
+  scope :awaiting_ratings, -> { succeeded.where(ratings_refreshed_at: nil) }
 
   def duration
     finished_at && (finished_at - started_at)

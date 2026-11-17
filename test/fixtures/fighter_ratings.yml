@@ -1,0 +1,14 @@
+striker_striking:
+  fighter: striker
+  skill: striking
+  value: 95
+
+striker_power:
+  fighter: striker
+  skill: power
+  value: 88
+
+wrestler_wrestling:
+  fighter: wrestler
+  skill: wrestling
+  value: 97

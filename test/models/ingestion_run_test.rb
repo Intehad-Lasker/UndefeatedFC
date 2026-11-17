@@ -39,4 +39,12 @@ class IngestionRunTest < ActiveSupport::TestCase
   test "recent_first lists the newest run first" do
     assert_equal ingestion_runs(:failed, :succeeded), IngestionRun.recent_first.to_a
   end
+
+  test "awaiting_ratings lists succeeded runs whose data is not rated yet" do
+    assert_equal [ ingestion_runs(:succeeded) ], IngestionRun.awaiting_ratings.to_a
+
+    ingestion_runs(:succeeded).update!(ratings_refreshed_at: Time.current)
+
+    assert_empty IngestionRun.awaiting_ratings
+  end
 end
