@@ -199,7 +199,7 @@ jobs:
       # Builds the production image (Rails, gems, and the React app from the Node
       # stage) without pushing it, so a broken Dockerfile fails the pull request.
       - name: Build production image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: false
