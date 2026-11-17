@@ -16,15 +16,22 @@ client, but anything that keeps cookies can use it.
   | 400 | `bad_request` | A required parameter is missing |
   | 403 | `forbidden` | Changing a draft another browser started |
   | 403 | `invalid_csrf_token` | A write without a valid `X-CSRF-Token` header |
+  | 401 | `unauthorized` | The endpoint needs a signed-in player |
+  | 401 | `invalid_credentials` | Wrong email address or password |
   | 404 | `not_found` | Unknown draft or fighter |
   | 422 | `rule_violation` | The request breaks a game rule; the message is shown to the player |
+  | 422 | `validation_failed` | Invalid sign-up; `fields` maps each field to its messages |
   | 429 | `rate_limited` | More than 20 new drafts per minute from one IP |
 
 - **Player identity.** The first request sets a signed, HTTP-only cookie with
   an anonymous player id. Only that browser can spin or pick in the drafts it
   started; anyone with the link can view them.
-- **CSRF.** Every response carries an `X-CSRF-Token` header. Send it back on
-  `POST` requests.
+- **CSRF.** Every response sets a readable `CSRF-TOKEN` cookie and an
+  `X-CSRF-Token` header. Send the token back in `X-CSRF-Token` on `POST` and
+  `DELETE` requests; browsers should read the cookie (see ADR 0010).
+- **Accounts are optional.** Guests can play. Signed-in players' drafts follow
+  them across browsers, and signing in claims the drafts that browser played
+  as a guest.
 - **Caching.** `GET` endpoints return an `ETag`. Repeat the request with
   `If-None-Match` to get `304 Not Modified` when nothing changed.
 - **Ratings are hidden until picked.** Pools, search results and profiles show
@@ -120,6 +127,21 @@ Up to 20 fighters whose name or nickname matches `q`, tolerating typos
 A fighter card plus `born_on`, the `pools` they can be drafted from, and their
 ten most recent `recent_bouts` (event, date, weight class, outcome, finish,
 opponent).
+
+### Accounts
+
+| Method and path | Body | Result |
+|---|---|---|
+| `GET /api/v1/session` | | `{ "user": { "id", "email_address", "display_name" } }` or `{ "user": null }` |
+| `POST /api/v1/session` | `{ "email_address", "password" }` | `201` and the user; `401 invalid_credentials`; rate limited |
+| `DELETE /api/v1/session` | | `204` |
+| `POST /api/v1/users` | `{ "user": { "email_address", "display_name", "password" } }` | `201`, signed in; `422 validation_failed` |
+| `POST /api/v1/passwords` | `{ "email_address" }` | `202` with the same message whether or not the address exists |
+| `GET /api/v1/drafts` | | The signed-in player's 50 latest drafts with status, result and `picks_made`; `401` for guests |
+
+Display names are 3-20 letters, numbers or underscores and unique regardless
+of case. Passwords need at least 10 characters. The reset email links to the
+server-rendered reset page, which shares the session cookie with the app.
 
 ## Example session
 

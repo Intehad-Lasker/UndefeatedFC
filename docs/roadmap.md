@@ -45,8 +45,8 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Served by Rails in production
 
 ## M7 — Accounts
-- [ ] Sign up, sign in, password reset
-- [ ] Draft history
+- [x] Sign up, sign in, password reset
+- [x] Draft history
 
 ## M8 — Daily Challenge (v0.2.0)
 - [ ] Same six spins for every player each day
