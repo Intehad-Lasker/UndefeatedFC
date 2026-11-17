@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_225206) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -52,6 +52,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
     t.check_constraint "ending_round >= 1 AND ending_round <= 5", name: "bouts_ending_round_range"
     t.check_constraint "ending_time_seconds >= 0 AND ending_time_seconds <= 300", name: "bouts_ending_time_range"
     t.check_constraint "finish::text = ANY (ARRAY['ko_tko'::character varying, 'submission'::character varying, 'decision'::character varying, 'disqualification'::character varying, 'no_contest'::character varying, 'other'::character varying]::text[])", name: "bouts_finish_known"
+  end
+
+  create_table "daily_challenges", force: :cascade do |t|
+    t.date "day", null: false
+    t.bigint "seed", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day"], name: "index_daily_challenges_on_day", unique: true
   end
 
   create_table "draft_rounds", force: :cascade do |t|
