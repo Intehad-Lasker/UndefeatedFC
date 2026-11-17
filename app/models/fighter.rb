@@ -1,6 +1,7 @@
 class Fighter < ApplicationRecord
   has_many :appearances, dependent: :destroy
   has_many :bouts, through: :appearances
+  has_many :ratings, class_name: "FighterRating", dependent: :delete_all
 
   RECORD_STATS = %i[wins losses draws no_contests].freeze
   RATE_STATS = %i[sig_strikes_landed_per_min sig_strikes_absorbed_per_min
@@ -42,6 +43,11 @@ class Fighter < ApplicationRecord
       ko_wins: self[:ko_wins], submission_wins: self[:submission_wins],
       ko_losses: self[:ko_losses], knockdowns: self[:total_knockdowns]
     )
+  end
+
+  # {"striking" => 87, "power" => 64, ...}; call on fighters loaded with includes(:ratings).
+  def rating_by_skill
+    ratings.to_h { |rating| [ rating.skill, rating.value ] }
   end
 
   # Professional record, e.g. "26-1-0" or "26-1-0 (1 NC)".

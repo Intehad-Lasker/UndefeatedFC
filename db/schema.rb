@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_074534) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_175652) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -73,6 +73,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_074534) do
     t.datetime "updated_at", null: false
     t.index ["held_on"], name: "index_events_on_held_on"
     t.index ["ufcstats_id"], name: "index_events_on_ufcstats_id", unique: true
+  end
+
+  create_table "fighter_ratings", force: :cascade do |t|
+    t.bigint "fighter_id", null: false
+    t.string "skill", null: false
+    t.integer "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fighter_id", "skill"], name: "index_fighter_ratings_on_fighter_id_and_skill", unique: true
+    t.index ["skill", "value"], name: "index_fighter_ratings_on_skill_and_value"
+    t.check_constraint "value >= 0 AND value <= 99", name: "fighter_ratings_value_range"
   end
 
   create_table "fighters", force: :cascade do |t|
@@ -144,4 +155,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_074534) do
   add_foreign_key "appearances", "fighters"
   add_foreign_key "bouts", "events"
   add_foreign_key "bouts", "weight_classes"
+  add_foreign_key "fighter_ratings", "fighters"
 end
