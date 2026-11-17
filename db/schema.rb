@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_074358) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_074432) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "appearances", force: :cascade do |t|
+    t.bigint "bout_id", null: false
+    t.bigint "fighter_id", null: false
+    t.string "outcome", null: false
+    t.integer "knockdowns", default: 0, null: false
+    t.integer "sig_strikes_landed", default: 0, null: false
+    t.integer "takedowns_landed", default: 0, null: false
+    t.integer "submission_attempts", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bout_id", "fighter_id"], name: "index_appearances_on_bout_id_and_fighter_id", unique: true
+    t.index ["bout_id"], name: "index_appearances_on_bout_id"
+    t.index ["fighter_id"], name: "index_appearances_on_fighter_id"
+    t.check_constraint "knockdowns >= 0", name: "appearances_knockdowns_non_negative"
+    t.check_constraint "outcome::text = ANY (ARRAY['win'::character varying, 'loss'::character varying, 'draw'::character varying, 'no_contest'::character varying]::text[])", name: "appearances_outcome_known"
+    t.check_constraint "sig_strikes_landed >= 0", name: "appearances_sig_strikes_landed_non_negative"
+    t.check_constraint "submission_attempts >= 0", name: "appearances_submission_attempts_non_negative"
+    t.check_constraint "takedowns_landed >= 0", name: "appearances_takedowns_landed_non_negative"
+  end
 
   create_table "bouts", force: :cascade do |t|
     t.string "ufcstats_id", null: false
@@ -104,6 +124,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_074358) do
     t.check_constraint "limit_lbs IS NULL OR limit_lbs > 0", name: "weight_classes_limit_lbs_positive"
   end
 
+  add_foreign_key "appearances", "bouts"
+  add_foreign_key "appearances", "fighters"
   add_foreign_key "bouts", "events"
   add_foreign_key "bouts", "weight_classes"
 end

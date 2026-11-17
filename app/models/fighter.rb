@@ -1,4 +1,7 @@
 class Fighter < ApplicationRecord
+  has_many :appearances, dependent: :destroy
+  has_many :bouts, through: :appearances
+
   RECORD_STATS = %i[wins losses draws no_contests].freeze
   RATE_STATS = %i[sig_strikes_landed_per_min sig_strikes_absorbed_per_min
                   takedowns_per_15_min submission_attempts_per_15_min].freeze

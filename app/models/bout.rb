@@ -3,6 +3,8 @@
 class Bout < ApplicationRecord
   belongs_to :event
   belongs_to :weight_class
+  has_many :appearances, dependent: :destroy
+  has_many :fighters, through: :appearances
 
   enum :finish, {
     ko_tko: "ko_tko",
