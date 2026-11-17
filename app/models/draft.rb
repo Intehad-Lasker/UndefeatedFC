@@ -20,6 +20,11 @@ class Draft < ApplicationRecord
 
   scope :with_rounds, -> { includes(rounds: %i[weight_class era fighter]) }
 
+  # Adds picks_made to each draft in one grouped query (for lists of drafts).
+  scope :with_pick_counts, -> {
+    left_joins(:rounds).select("drafts.*", "COUNT(draft_rounds.fighter_id) AS picks_made").group(:id)
+  }
+
   # Guest drafts belong to the browser that started them; claimed drafts belong
   # to the account.
   def played_by?(player_id, user = nil)

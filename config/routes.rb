@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       resource :session, only: %i[show create destroy]
       resources :users, only: :create
       resources :passwords, only: :create
-      resources :drafts, only: %i[create show] do
+      resources :drafts, only: %i[index create show] do
         resources :rounds, only: :create
         resources :picks, only: :create
       end
