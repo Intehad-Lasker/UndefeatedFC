@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_074022) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_074102) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "eras", force: :cascade do |t|
+    t.string "name", null: false
+    t.date "starts_on", null: false
+    t.date "ends_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_eras_on_name", unique: true
+    t.check_constraint "ends_on IS NULL OR starts_on < ends_on", name: "eras_starts_before_ends"
+    t.exclusion_constraint "daterange(starts_on, ends_on, '[]'::text) WITH &&", using: :gist, name: "eras_no_overlap"
+  end
 
   create_table "weight_classes", force: :cascade do |t|
     t.string "name", null: false

@@ -1,0 +1,14 @@
+mainstream:
+  name: Mainstream
+  starts_on: 2011-01-01
+  ends_on: 2015-12-31
+
+modern:
+  name: Modern
+  starts_on: 2016-01-01
+  ends_on: 2020-12-31
+
+current:
+  name: Current
+  starts_on: 2021-01-01
+  ends_on:
