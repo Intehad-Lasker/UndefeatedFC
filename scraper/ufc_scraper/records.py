@@ -45,3 +45,26 @@ class EventDetail:
     held_on: date
     location: str | None
     bouts: tuple[BoutRecord, ...]
+
+
+@dataclass(frozen=True)
+class FighterProfile:
+    ufcstats_id: str
+    name: str
+    nickname: str | None
+    height_cm: int | None
+    reach_cm: int | None
+    stance: str | None
+    born_on: date | None
+    wins: int
+    losses: int
+    draws: int
+    no_contests: int
+    sig_strikes_landed_per_min: float
+    sig_strike_accuracy: float
+    sig_strikes_absorbed_per_min: float
+    sig_strike_defense: float
+    takedowns_per_15_min: float
+    takedown_accuracy: float
+    takedown_defense: float
+    submission_attempts_per_15_min: float
