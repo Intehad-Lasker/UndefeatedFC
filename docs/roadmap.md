@@ -35,9 +35,9 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Fight simulation and scoring
 
 ## M5 — JSON API
-- [ ] Drafts, spins and picks
-- [ ] Fighter search and profiles
-- [ ] HTTP caching and rate limiting
+- [x] Drafts, spins and picks
+- [x] Fighter search and profiles
+- [x] HTTP caching and rate limiting
 
 ## M6 — React app (v0.1.0)
 - [ ] Spin wheels, fighter pool, slot board, results
