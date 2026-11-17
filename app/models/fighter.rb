@@ -25,6 +25,19 @@ class Fighter < ApplicationRecord
     total_knockdowns: "COALESCE(SUM(appearances.knockdowns), 0)"
   }.freeze
 
+  # Name or nickname search that tolerates typos: substring matches (ILIKE) plus
+  # trigram similarity on the name, best matches first. Backed by a GIN index.
+  scope :search, ->(query) {
+    term = query.to_s.squish
+    if term.empty?
+      none
+    else
+      where("fighters.name ILIKE :like OR fighters.nickname ILIKE :like OR fighters.name % :term",
+        like: "%#{sanitize_sql_like(term)}%", term: term)
+        .order(Arel.sql(sanitize_sql_array([ "similarity(fighters.name, ?) DESC, fighters.name", term ])))
+    end
+  }
+
   # Everyone who fought at least once in this weight class during this era.
   scope :in_pool, ->(weight_class:, era:) {
     where(id: Appearance.with_era.where(bouts: { weight_class_id: weight_class }, eras: { id: era }).select(:fighter_id))
