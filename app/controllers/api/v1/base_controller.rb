@@ -11,6 +11,7 @@ module Api
       class Forbidden < StandardError; end
 
       PLAYER_COOKIE = :player_id
+      CSRF_COOKIE = "CSRF-TOKEN"
 
       # The same cookie-backed sessions as the HTML side (Rails' authentication
       # generator). Guests can play, so endpoints opt in to requiring a user.
@@ -70,8 +71,14 @@ module Api
         render json: { error: { code: code, message: message, **details } }, status: status
       end
 
+      # The token goes out twice: as a header for API clients, and as a
+      # JS-readable cookie for the React app. The cookie arrives in the same
+      # response as the session cookie, so the pair can never disagree, even
+      # when a new browser's first requests race to create a session.
       def expose_csrf_token
-        response.set_header("X-CSRF-Token", form_authenticity_token)
+        token = form_authenticity_token
+        response.set_header("X-CSRF-Token", token)
+        cookies[CSRF_COOKIE] = { value: token, same_site: :strict, secure: request.ssl? }
       end
     end
   end

@@ -3,7 +3,16 @@
 // turns error responses into ApiError carrying the server's message.
 
 const BASE = '/api/v1'
-let csrfToken = null
+const CSRF_COOKIE = 'CSRF-TOKEN'
+let csrfToken = null // fallback when cookies are unavailable (e.g. tests)
+
+// Rails sets the CSRF-TOKEN cookie in the same response as the session cookie,
+// so reading it at request time always gives the token for the session the
+// browser holds now, even if several first requests raced to create sessions.
+function currentCsrfToken() {
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${CSRF_COOKIE}=([^;]+)`))
+  return match ? decodeURIComponent(match[1]) : csrfToken
+}
 
 export class ApiError extends Error {
   constructor(status, code, message) {
@@ -17,7 +26,8 @@ export class ApiError extends Error {
 async function send(method, path, body) {
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  if (method !== 'GET' && csrfToken) headers['X-CSRF-Token'] = csrfToken
+  const requestToken = method === 'GET' ? null : currentCsrfToken()
+  if (requestToken) headers['X-CSRF-Token'] = requestToken
 
   const response = await fetch(`${BASE}${path}`, {
     method,
@@ -47,7 +57,7 @@ function get(path) {
 
 // Writes need a CSRF token; fetch one first if this tab has not made a request yet.
 async function post(path, body) {
-  if (!csrfToken) await get('/meta')
+  if (!currentCsrfToken()) await get('/meta')
   return send('POST', path, body)
 }
 
