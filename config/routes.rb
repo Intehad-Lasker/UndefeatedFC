@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         resources :rounds, only: :create
         resources :picks, only: :create
       end
+      resources :fighters, only: %i[index show]
     end
   end
 end
