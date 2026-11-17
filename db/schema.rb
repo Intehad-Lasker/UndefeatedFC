@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_175652) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_175853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -134,6 +134,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_175652) do
     t.text "error_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "ratings_refreshed_at"
     t.index ["status", "finished_at"], name: "index_ingestion_runs_on_status_and_finished_at"
     t.check_constraint "finished_at IS NULL OR finished_at >= started_at", name: "ingestion_runs_finishes_after_start"
     t.check_constraint "status::text = ANY (ARRAY['running'::character varying, 'succeeded'::character varying, 'failed'::character varying]::text[])", name: "ingestion_runs_status_known"
