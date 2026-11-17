@@ -35,8 +35,13 @@ class Draft < ApplicationRecord
   end
 
   # Moves a browser's guest drafts onto an account when that browser signs in.
+  # Guest attempts at challenges the account already played stay with the
+  # browser, so an account still has one attempt per challenge.
   def self.claim_for(user, player_id:)
-    where(player_id: player_id, user_id: nil).update_all(user_id: user.id, updated_at: Time.current)
+    played = where(user: user).where.not(daily_challenge_id: nil).select(:daily_challenge_id)
+    where(player_id: player_id, user_id: nil)
+      .where("daily_challenge_id IS NULL OR daily_challenge_id NOT IN (?)", played)
+      .update_all(user_id: user.id, updated_at: Time.current)
   end
 
   def challenge? = daily_challenge_id.present?

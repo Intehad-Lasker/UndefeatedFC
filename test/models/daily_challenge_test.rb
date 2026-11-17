@@ -73,3 +73,69 @@ class DailyChallengeDraftsTest < ActiveSupport::TestCase
     assert_not Draft.create!.challenge?
   end
 end
+
+class DailyChallengeAttemptsTest < ActiveSupport::TestCase
+  BROWSER_A = "0d7d3a10-0000-4000-8000-00000000000a".freeze
+  BROWSER_B = "0d7d3a10-0000-4000-8000-00000000000b".freeze
+
+  setup { @challenge = daily_challenges(:yesterday) }
+
+  test "attempt! starts one attempt and then keeps returning it" do
+    first = @challenge.attempt!(player_id: BROWSER_A)
+
+    assert_equal first, @challenge.attempt!(player_id: BROWSER_A)
+    assert_equal 1, @challenge.drafts.count
+  end
+
+  test "an account has one attempt across browsers" do
+    first = @challenge.attempt!(player_id: BROWSER_A, user: users(:one))
+
+    assert_equal first, @challenge.attempt!(player_id: BROWSER_B, user: users(:one))
+  end
+
+  test "a signed-in player picks up the attempt they started as a guest on this browser" do
+    guest = @challenge.attempt!(player_id: BROWSER_A)
+
+    assert_equal guest, @challenge.attempt!(player_id: BROWSER_A, user: users(:one))
+  end
+
+  test "different players get separate attempts" do
+    assert_not_equal @challenge.attempt!(player_id: BROWSER_A), @challenge.attempt!(player_id: BROWSER_B)
+  end
+
+  test "the database refuses a second attempt from the same browser" do
+    @challenge.start_draft!(player_id: BROWSER_A)
+
+    assert_raises(ActiveRecord::RecordNotUnique) { @challenge.start_draft!(player_id: BROWSER_A) }
+  end
+
+  test "the database refuses a second attempt from the same account" do
+    @challenge.start_draft!(player_id: BROWSER_A, user: users(:one))
+
+    assert_raises(ActiveRecord::RecordNotUnique) { @challenge.start_draft!(player_id: BROWSER_B, user: users(:one)) }
+  end
+
+  test "ordinary drafts are not limited" do
+    2.times { Draft.create!(player_id: BROWSER_A) }
+
+    assert_equal 2, Draft.where(player_id: BROWSER_A, daily_challenge_id: nil).count
+  end
+
+  test "claiming skips a guest attempt at a challenge the account already played" do
+    @challenge.start_draft!(player_id: BROWSER_B, user: users(:one))
+    guest_attempt = @challenge.start_draft!(player_id: BROWSER_A)
+    guest_casual = Draft.create!(player_id: BROWSER_A)
+
+    Draft.claim_for(users(:one), player_id: BROWSER_A)
+
+    assert_nil guest_attempt.reload.user_id
+    assert_equal users(:one).id, guest_casual.reload.user_id
+  end
+
+  test "after signing out, the browser still sees the attempt it already used" do
+    claimed = @challenge.attempt!(player_id: BROWSER_A, user: users(:one))
+
+    assert_equal claimed, @challenge.attempt!(player_id: BROWSER_A)
+    assert_equal 1, @challenge.drafts.count
+  end
+end

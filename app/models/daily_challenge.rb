@@ -24,4 +24,21 @@ class DailyChallenge < ApplicationRecord
   def start_draft!(player_id:, user: nil)
     drafts.create!(seed: seed, player_id: player_id, user: user)
   end
+
+  # The player's existing attempt: the account's when signed in, otherwise this
+  # browser's (even if an account has since claimed it, since the browser
+  # already used its one attempt).
+  def attempt_for(player_id:, user: nil)
+    return drafts.find_by(player_id: player_id) unless user
+
+    drafts.find_by(user: user) || drafts.find_by(player_id: player_id, user_id: nil)
+  end
+
+  # One attempt per player: returns the existing one or starts it. The partial
+  # unique indexes settle a double-click race; the loser reads the winner's row.
+  def attempt!(player_id:, user: nil)
+    attempt_for(player_id: player_id, user: user) || start_draft!(player_id: player_id, user: user)
+  rescue ActiveRecord::RecordNotUnique
+    attempt_for(player_id: player_id, user: user)
+  end
 end

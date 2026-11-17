@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_225319) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_225352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -97,6 +97,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_225319) do
     t.uuid "player_id"
     t.bigint "user_id"
     t.bigint "daily_challenge_id"
+    t.index ["daily_challenge_id", "player_id"], name: "index_drafts_one_challenge_attempt_per_browser", unique: true, where: "(daily_challenge_id IS NOT NULL)"
+    t.index ["daily_challenge_id", "user_id"], name: "index_drafts_one_challenge_attempt_per_account", unique: true, where: "((daily_challenge_id IS NOT NULL) AND (user_id IS NOT NULL))"
     t.index ["player_id"], name: "index_drafts_on_player_id"
     t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
     t.index ["user_id", "created_at"], name: "index_drafts_on_user_id_and_created_at"
