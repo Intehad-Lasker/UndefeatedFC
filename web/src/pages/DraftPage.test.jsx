@@ -133,3 +133,10 @@ test('the pick tray drafts the selected fighter too', async () => {
 
   expect(api.pick).toHaveBeenCalledWith('d1', 9, 'striking')
 })
+
+test('a daily challenge draft is labelled', async () => {
+  vi.mocked(api.getDraft).mockResolvedValue({ ...draftReady, daily_challenge: { day: '2026-11-17' } })
+  renderRoute('/drafts/d1')
+
+  expect(await screen.findByText('Daily challenge · 2026-11-17')).toBeInTheDocument()
+})

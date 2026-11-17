@@ -10,6 +10,9 @@
 #     schedule: at 5am every day
 
 production:
+  create_daily_challenge:
+    class: CreateDailyChallengeJob
+    schedule: every day at 23:50
   process_ingestion_runs:
     class: ProcessIngestionRunsJob
     schedule: every 10 minutes

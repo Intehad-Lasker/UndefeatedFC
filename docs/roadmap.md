@@ -49,8 +49,8 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Draft history
 
 ## M8 — Daily Challenge (v0.2.0)
-- [ ] Same six spins for every player each day
-- [ ] One attempt per player per day
+- [x] Same six spins for every player each day
+- [x] One attempt per player per day
 
 ## M9 — Leaderboards
 - [ ] Daily and all-time leaderboards, cached

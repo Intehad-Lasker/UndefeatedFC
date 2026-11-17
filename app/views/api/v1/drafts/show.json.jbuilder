@@ -1,6 +1,11 @@
 # The seed is never sent: it would let a player predict the next spins.
 json.call(@draft, :id, :status, :created_at, :completed_at)
 json.owned @owned
+if @draft.challenge?
+  json.daily_challenge { json.day @draft.daily_challenge.day }
+else
+  json.daily_challenge nil
+end
 
 json.slots Skills.all do |skill|
   round = @draft.picked_rounds.find { |picked| picked.slot == skill.key }

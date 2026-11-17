@@ -82,6 +82,8 @@ export const api = {
   signOut: () => destroy('/session'),
   requestPasswordReset: (emailAddress) => post('/passwords', { email_address: emailAddress }),
   myDrafts: () => get('/drafts'),
+  dailyChallenge: () => get('/daily_challenge'),
+  startDailyChallenge: () => post('/daily_challenge/attempt'),
 }
 
 // Test hook: forget the token between tests.

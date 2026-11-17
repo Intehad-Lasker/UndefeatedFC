@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_225352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -54,6 +54,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
     t.check_constraint "finish::text = ANY (ARRAY['ko_tko'::character varying, 'submission'::character varying, 'decision'::character varying, 'disqualification'::character varying, 'no_contest'::character varying, 'other'::character varying]::text[])", name: "bouts_finish_known"
   end
 
+  create_table "daily_challenges", force: :cascade do |t|
+    t.date "day", null: false
+    t.bigint "seed", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day"], name: "index_daily_challenges_on_day", unique: true
+  end
+
   create_table "draft_rounds", force: :cascade do |t|
     t.uuid "draft_id", null: false
     t.integer "number", null: false
@@ -88,6 +96,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
     t.datetime "updated_at", null: false
     t.uuid "player_id"
     t.bigint "user_id"
+    t.bigint "daily_challenge_id"
+    t.index ["daily_challenge_id", "player_id"], name: "index_drafts_one_challenge_attempt_per_browser", unique: true, where: "(daily_challenge_id IS NOT NULL)"
+    t.index ["daily_challenge_id", "user_id"], name: "index_drafts_one_challenge_attempt_per_account", unique: true, where: "((daily_challenge_id IS NOT NULL) AND (user_id IS NOT NULL))"
     t.index ["player_id"], name: "index_drafts_on_player_id"
     t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
     t.index ["user_id", "created_at"], name: "index_drafts_on_user_id_and_created_at"
@@ -224,6 +235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
   add_foreign_key "draft_rounds", "eras"
   add_foreign_key "draft_rounds", "fighters"
   add_foreign_key "draft_rounds", "weight_classes"
+  add_foreign_key "drafts", "daily_challenges"
   add_foreign_key "drafts", "users", on_delete: :nullify
   add_foreign_key "fighter_ratings", "fighters"
   add_foreign_key "sessions", "users"

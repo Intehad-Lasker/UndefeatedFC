@@ -143,6 +143,18 @@ Display names are 3-20 letters, numbers or underscores and unique regardless
 of case. Passwords need at least 10 characters. The reset email links to the
 server-rendered reset page, which shares the session cookie with the app.
 
+### Daily challenge
+
+| Method and path | Result |
+|---|---|
+| `GET /api/v1/daily_challenge` | `{ "day": "2026-11-17", "attempt": null }`, or this player's attempt (`id`, `status`, `overall`, `record`, `undefeated`) |
+| `POST /api/v1/daily_challenge/attempt` | `201` and a new draft for today's challenge, or `200` and the existing attempt |
+
+Every attempt at a day's challenge uses that day's seed, so everyone gets the
+same six spins. Each browser and each account gets one attempt per day (UTC),
+enforced by partial unique indexes. Challenge drafts include
+`"daily_challenge": { "day": ... }` in the draft response.
+
 ## Example session
 
 ```bash
