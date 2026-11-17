@@ -6,6 +6,7 @@ class Draft < ApplicationRecord
   SEED_RANGE = 1...(2**62)
 
   belongs_to :user, optional: true
+  belongs_to :daily_challenge, optional: true
   has_many :rounds, -> { order(:number) }, class_name: "DraftRound", inverse_of: :draft, dependent: :delete_all
 
   enum :status, { in_progress: "in_progress", completed: "completed" }, validate: true
@@ -37,6 +38,8 @@ class Draft < ApplicationRecord
   def self.claim_for(user, player_id:)
     where(player_id: player_id, user_id: nil).update_all(user_id: user.id, updated_at: Time.current)
   end
+
+  def challenge? = daily_challenge_id.present?
 
   def record = completed? ? "#{wins}-#{losses}" : nil
   def undefeated? = completed? && losses.zero?

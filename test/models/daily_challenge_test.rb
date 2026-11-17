@@ -29,3 +29,47 @@ class DailyChallengeTest < ActiveSupport::TestCase
     end
   end
 end
+
+class DailyChallengeDraftsTest < ActiveSupport::TestCase
+  include DraftBuilder
+
+  PLAYERS = %w[
+    0d7d3a10-0000-4000-8000-000000000001
+    0d7d3a10-0000-4000-8000-000000000002
+  ].freeze
+
+  setup do
+    pools = %i[lightweight welterweight].product(%i[mainstream modern current])
+    @sizes = pools.to_h { |wc, era| [ [ weight_classes(wc).id, eras(era).id ], 30 ] }
+  end
+
+  # Spins one round and fills it directly, returning the pool that came up.
+  def spin_and_fill(draft, slot)
+    round = Drafts::Spinner.new(Draft.find(draft.id), pool_sizes: -> { @sizes }).call
+    fighter = Fighter.create!(ufcstats_id: "synthetic-dc-#{SecureRandom.hex(4)}", name: "Challenger")
+    round.update!(fighter: fighter, slot: slot, rating: 70, picked_at: Time.current)
+    [ round.weight_class_id, round.era_id ]
+  end
+
+  test "a challenge draft uses the challenge's seed" do
+    challenge = daily_challenges(:yesterday)
+    draft = challenge.start_draft!(player_id: PLAYERS.first)
+
+    assert_equal challenge.seed, draft.seed
+    assert draft.challenge?
+  end
+
+  test "every player gets the same spins in the same order" do
+    challenge = daily_challenges(:yesterday)
+    sequences = PLAYERS.map do |player_id|
+      draft = challenge.start_draft!(player_id: player_id)
+      Skills.keys.first(4).map { |slot| spin_and_fill(draft, slot) }
+    end
+
+    assert_equal sequences.first, sequences.last
+  end
+
+  test "ordinary drafts are not challenges" do
+    assert_not Draft.create!.challenge?
+  end
+end

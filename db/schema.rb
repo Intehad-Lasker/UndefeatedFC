@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_225206) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_225319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_225206) do
     t.datetime "updated_at", null: false
     t.uuid "player_id"
     t.bigint "user_id"
+    t.bigint "daily_challenge_id"
     t.index ["player_id"], name: "index_drafts_on_player_id"
     t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
     t.index ["user_id", "created_at"], name: "index_drafts_on_user_id_and_created_at"
@@ -232,6 +233,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_225206) do
   add_foreign_key "draft_rounds", "eras"
   add_foreign_key "draft_rounds", "fighters"
   add_foreign_key "draft_rounds", "weight_classes"
+  add_foreign_key "drafts", "daily_challenges"
   add_foreign_key "drafts", "users", on_delete: :nullify
   add_foreign_key "fighter_ratings", "fighters"
   add_foreign_key "sessions", "users"

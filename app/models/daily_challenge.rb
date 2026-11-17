@@ -1,6 +1,8 @@
 # The challenge for one UTC day. Every player's challenge draft uses its seed,
 # so everyone gets the same six spins.
 class DailyChallenge < ApplicationRecord
+  has_many :drafts, dependent: :restrict_with_error
+
   attribute :seed, default: -> { SecureRandom.random_number(Draft::SEED_RANGE) }
 
   # No uniqueness validation on purpose: create_or_find_by! needs the insert to
@@ -16,4 +18,10 @@ class DailyChallenge < ApplicationRecord
   end
 
   def self.today = for_day
+
+  # A player's attempt. It copies the challenge's seed, which is all it takes
+  # for the Spinner and FightSimulator to give everyone the same six spins.
+  def start_draft!(player_id:, user: nil)
+    drafts.create!(seed: seed, player_id: player_id, user: user)
+  end
 end
