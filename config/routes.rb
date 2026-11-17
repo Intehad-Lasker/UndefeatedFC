@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     resources :fighters, only: %i[index show edit update]
     resources :weight_classes, only: %i[index update]
     resources :eras, only: %i[index edit update]
+    resources :ingestion_runs, only: :index do
+      post :refresh_ratings, on: :collection
+    end
   end
 
   namespace :api, defaults: { format: :json } do
