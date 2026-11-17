@@ -1,0 +1,58 @@
+striker:
+  ufcstats_id: synthetic-striker
+  name: Rico Vance
+  nickname: The Metronome
+  height_cm: 180
+  reach_cm: 188
+  stance: Orthodox
+  born_on: 1990-04-02
+  wins: 20
+  losses: 3
+  draws: 0
+  sig_strikes_landed_per_min: 6.10
+  sig_strike_accuracy: 0.520
+  sig_strikes_absorbed_per_min: 3.40
+  sig_strike_defense: 0.610
+  takedowns_per_15_min: 0.40
+  takedown_accuracy: 0.300
+  takedown_defense: 0.780
+  submission_attempts_per_15_min: 0.10
+
+wrestler:
+  ufcstats_id: synthetic-wrestler
+  name: Dmitri Kolt
+  height_cm: 178
+  reach_cm: 180
+  stance: Southpaw
+  born_on: 1992-09-14
+  wins: 25
+  losses: 1
+  draws: 0
+  no_contests: 1
+  sig_strikes_landed_per_min: 3.20
+  sig_strike_accuracy: 0.480
+  sig_strikes_absorbed_per_min: 1.90
+  sig_strike_defense: 0.640
+  takedowns_per_15_min: 5.30
+  takedown_accuracy: 0.490
+  takedown_defense: 0.850
+  submission_attempts_per_15_min: 0.90
+
+grappler:
+  ufcstats_id: synthetic-grappler
+  name: Tomas Ferreira
+  height_cm: 175
+  reach_cm: 178
+  stance: Orthodox
+  born_on: 1994-01-21
+  wins: 15
+  losses: 5
+  draws: 1
+  sig_strikes_landed_per_min: 2.50
+  sig_strike_accuracy: 0.410
+  sig_strikes_absorbed_per_min: 3.10
+  sig_strike_defense: 0.520
+  takedowns_per_15_min: 2.10
+  takedown_accuracy: 0.350
+  takedown_defense: 0.600
+  submission_attempts_per_15_min: 2.40
