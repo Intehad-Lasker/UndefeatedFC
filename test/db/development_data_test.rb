@@ -1,4 +1,5 @@
 require "test_helper"
+require Rails.root.join("db/seeds/reference_data")
 require Rails.root.join("db/seeds/development_data")
 
 class DevelopmentDataTest < ActiveSupport::TestCase

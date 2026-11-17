@@ -1,4 +1,5 @@
 require "test_helper"
+require Rails.root.join("db/seeds/reference_data")
 
 class SeedsTest < ActiveSupport::TestCase
   test "seeds every weight class and era" do
