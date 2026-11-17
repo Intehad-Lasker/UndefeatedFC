@@ -1,5 +1,7 @@
 module Drafts
   # Records a pick: the chosen fighter fills one empty slot from the open round.
+  # The pick that fills the last slot also scores the draft, in the same
+  # transaction, so a draft is never full but unscored.
   #
   # Every rule is checked under the draft's row lock, and the unique indexes on
   # draft_rounds back them up, so a double-click or two tabs cannot draft the
@@ -20,6 +22,7 @@ module Drafts
         fighter = fighter_in_pool!(round)
 
         round.update!(fighter: fighter, slot: skill.key, rating: rating(fighter, skill), picked_at: Time.current)
+        Scorer.new(@draft).call if @draft.all_slots_filled?
         round
       end
     rescue ActiveRecord::RecordNotUnique
