@@ -64,6 +64,7 @@ class Store:
         self.counts.events += 1
 
     def save_fighter(self, profile: FighterProfile) -> None:
+        """Inserts or refreshes a fighter, except one an admin has locked."""
         columns = ("ufcstats_id", *PROFILE_COLUMNS)
         values = [getattr(profile, column) for column in columns]
         updates = ", ".join(f"{column} = EXCLUDED.{column}" for column in PROFILE_COLUMNS)
@@ -73,6 +74,7 @@ class Store:
                 INSERT INTO fighters ({", ".join(columns)}, created_at, updated_at)
                 VALUES ({", ".join(["%s"] * len(columns))}, now(), now())
                 ON CONFLICT (ufcstats_id) DO UPDATE SET {updates}, updated_at = now()
+                WHERE NOT fighters.locked
                 """,
                 values,
             )
@@ -124,13 +126,18 @@ class Store:
         self.counts.bouts += 1
 
     def _ensure_fighter(self, result: FighterResult) -> int:
-        """Creates a placeholder fighter from the event page; save_fighter fills in stats."""
+        """Creates a placeholder fighter from the event page; save_fighter fills in stats.
+
+        The update always runs (keeping a locked fighter's name) so RETURNING
+        yields the id either way; a WHERE clause would return no row when locked.
+        """
         self.counts.fighter_ids.add(result.ufcstats_id)
         return self._returning_id(
             """
             INSERT INTO fighters (ufcstats_id, name, created_at, updated_at)
             VALUES (%s, %s, now(), now())
-            ON CONFLICT (ufcstats_id) DO UPDATE SET name = EXCLUDED.name
+            ON CONFLICT (ufcstats_id) DO UPDATE
+              SET name = CASE WHEN fighters.locked THEN fighters.name ELSE EXCLUDED.name END
             RETURNING id
             """,
             (result.ufcstats_id, result.name),

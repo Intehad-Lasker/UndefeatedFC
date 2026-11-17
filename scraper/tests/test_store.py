@@ -112,3 +112,30 @@ def test_a_failed_event_leaves_no_partial_rows(db, event):
         Store(db).save_event(event)
 
     assert count(db, "bouts") == 0
+
+
+def lock(db, ufcstats_id, name):
+    db.execute(
+        "INSERT INTO fighters (ufcstats_id, name, locked, created_at, updated_at) "
+        "VALUES (%s, %s, true, now(), now())",
+        (ufcstats_id, name),
+    )
+
+
+def test_a_locked_fighter_keeps_its_corrections(db, fixture_html):
+    lock(db, "f001", "Rico Vance (corrected)")
+
+    Store(db).save_fighter(parse_fighter_page(fixture_html("fighter_details.html"), FIGHTER_URL))
+
+    row = db.execute("SELECT name, wins FROM fighters WHERE ufcstats_id = 'f001'").fetchone()
+    assert row == ("Rico Vance (corrected)", 0)
+
+
+def test_events_still_load_bouts_for_locked_fighters(db, event):
+    lock(db, "f001", "Rico Vance (corrected)")
+
+    Store(db).save_event(event)
+
+    name = db.execute("SELECT name FROM fighters WHERE ufcstats_id = 'f001'").fetchone()[0]
+    assert name == "Rico Vance (corrected)"
+    assert count(db, "appearances") == 10
