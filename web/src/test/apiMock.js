@@ -5,7 +5,7 @@ import { vi } from 'vitest'
 export const API_METHODS = [
   'meta', 'createDraft', 'getDraft', 'spin', 'pick', 'searchFighters', 'getFighter',
   'currentSession', 'signIn', 'signUp', 'signOut', 'requestPasswordReset', 'myDrafts',
-  'dailyChallenge', 'startDailyChallenge',
+  'dailyChallenge', 'startDailyChallenge', 'leaderboard',
 ]
 
 export function apiMock() {

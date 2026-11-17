@@ -53,8 +53,8 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] One attempt per player per day
 
 ## M9 — Leaderboards
-- [ ] Daily and all-time leaderboards, cached
-- [ ] Live updates over Action Cable
+- [x] Daily and all-time leaderboards, cached
+- [x] Live updates over Action Cable
 
 ## M10 — Admin (v0.3.0)
 - [ ] Data corrections with Hotwire

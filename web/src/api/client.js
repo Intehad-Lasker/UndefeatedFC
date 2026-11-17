@@ -84,6 +84,7 @@ export const api = {
   myDrafts: () => get('/drafts'),
   dailyChallenge: () => get('/daily_challenge'),
   startDailyChallenge: () => post('/daily_challenge/attempt'),
+  leaderboard: (board) => get(`/leaderboards/${board}`),
 }
 
 // Test hook: forget the token between tests.

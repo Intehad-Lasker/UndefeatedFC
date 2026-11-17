@@ -21,6 +21,7 @@ export default defineConfig(({ command }) => ({
     // header with the Host header, and both must say localhost:5173.
     proxy: {
       '/api': { target: RAILS_URL, changeOrigin: false },
+      '/cable': { target: RAILS_URL.replace(/^http/, 'ws'), ws: true, changeOrigin: false },
     },
   },
   test: {
