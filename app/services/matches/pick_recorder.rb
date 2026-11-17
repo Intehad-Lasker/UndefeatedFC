@@ -19,8 +19,10 @@ module Matches
         skill = skill!(seat)
         fighter = fighter_in_pool!
 
-        @match.picks.create!(number: @match.next_pick_number, seat: seat, fighter: fighter, slot: skill.key,
-                             rating: FighterRating.where(fighter: fighter, skill: skill.key).pick(:value) || 0)
+        pick = @match.picks.create!(number: @match.next_pick_number, seat: seat, fighter: fighter, slot: skill.key,
+                                    rating: FighterRating.where(fighter: fighter, skill: skill.key).pick(:value) || 0)
+        Finisher.new(@match).call if @match.picks.size == Match::PICKS
+        pick
       end
     rescue ActiveRecord::RecordNotUnique
       raise RuleViolation, "That pick clashes with another one. Refresh and try again."
