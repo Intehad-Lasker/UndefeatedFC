@@ -1,0 +1,17 @@
+fight_night_2013:
+  ufcstats_id: synthetic-event-2013
+  name: Fight Night Example 2013
+  held_on: 2013-06-15
+  location: Las Vegas, Nevada, USA
+
+numbered_2018:
+  ufcstats_id: synthetic-event-2018
+  name: UFC Example 2018
+  held_on: 2018-03-03
+  location: Toronto, Ontario, Canada
+
+numbered_2023:
+  ufcstats_id: synthetic-event-2023
+  name: UFC Example 2023
+  held_on: 2023-09-09
+  location: Sydney, New South Wales, Australia
