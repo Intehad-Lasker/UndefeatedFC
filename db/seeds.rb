@@ -8,5 +8,6 @@ Seeds::ReferenceData.seed!
 # Skipped once any fighters exist, so real data is never mixed with it.
 if Rails.env.development? && Fighter.none?
   Seeds::DevelopmentData.seed!
+  Ratings::Refresher.new.call
   puts "Seeded #{Fighter.count} synthetic fighters across #{Bout.count} bouts."
 end
