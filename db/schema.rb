@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_180146) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_180229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,6 +51,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_180146) do
     t.check_constraint "ending_round >= 1 AND ending_round <= 5", name: "bouts_ending_round_range"
     t.check_constraint "ending_time_seconds >= 0 AND ending_time_seconds <= 300", name: "bouts_ending_time_range"
     t.check_constraint "finish::text = ANY (ARRAY['ko_tko'::character varying, 'submission'::character varying, 'decision'::character varying, 'disqualification'::character varying, 'no_contest'::character varying, 'other'::character varying]::text[])", name: "bouts_finish_known"
+  end
+
+  create_table "draft_rounds", force: :cascade do |t|
+    t.uuid "draft_id", null: false
+    t.integer "number", null: false
+    t.bigint "weight_class_id", null: false
+    t.bigint "era_id", null: false
+    t.bigint "fighter_id"
+    t.string "slot"
+    t.integer "rating"
+    t.datetime "picked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["draft_id", "fighter_id"], name: "index_draft_rounds_on_draft_id_and_fighter_id", unique: true
+    t.index ["draft_id", "number"], name: "index_draft_rounds_on_draft_id_and_number", unique: true
+    t.index ["draft_id", "slot"], name: "index_draft_rounds_on_draft_id_and_slot", unique: true
+    t.index ["draft_id"], name: "index_draft_rounds_one_open_round_per_draft", unique: true, where: "(fighter_id IS NULL)"
+    t.index ["era_id"], name: "index_draft_rounds_on_era_id"
+    t.index ["weight_class_id"], name: "index_draft_rounds_on_weight_class_id"
+    t.check_constraint "fighter_id IS NULL AND slot IS NULL AND rating IS NULL AND picked_at IS NULL OR fighter_id IS NOT NULL AND slot IS NOT NULL AND rating IS NOT NULL AND picked_at IS NOT NULL", name: "draft_rounds_pick_is_complete"
+    t.check_constraint "number >= 1", name: "draft_rounds_number_positive"
+    t.check_constraint "rating >= 0 AND rating <= 99", name: "draft_rounds_rating_range"
   end
 
   create_table "drafts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -173,5 +195,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_180146) do
   add_foreign_key "appearances", "fighters"
   add_foreign_key "bouts", "events"
   add_foreign_key "bouts", "weight_classes"
+  add_foreign_key "draft_rounds", "drafts", on_delete: :cascade
+  add_foreign_key "draft_rounds", "eras"
+  add_foreign_key "draft_rounds", "fighters"
+  add_foreign_key "draft_rounds", "weight_classes"
   add_foreign_key "fighter_ratings", "fighters"
 end

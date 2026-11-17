@@ -5,6 +5,8 @@
 class Draft < ApplicationRecord
   SEED_RANGE = 1...(2**62)
 
+  has_many :rounds, -> { order(:number) }, class_name: "DraftRound", inverse_of: :draft, dependent: :delete_all
+
   enum :status, { in_progress: "in_progress", completed: "completed" }, validate: true
 
   # Only the default is declared, so the bigint column type is kept.
