@@ -14,6 +14,15 @@ class Appearance < ApplicationRecord
     numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :bout_has_room, on: :create
 
+  ERA_JOIN = <<~SQL.squish.freeze
+    INNER JOIN eras ON events.held_on >= eras.starts_on
+      AND (eras.ends_on IS NULL OR events.held_on <= eras.ends_on)
+  SQL
+
+  # Joins each appearance to its bout, event and the era the event fell in.
+  # This is the one place that decides which era a fight belongs to.
+  scope :with_era, -> { joins(bout: :event).joins(ERA_JOIN) }
+
   private
 
   def bout_has_room

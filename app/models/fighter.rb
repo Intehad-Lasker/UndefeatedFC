@@ -25,6 +25,20 @@ class Fighter < ApplicationRecord
     total_knockdowns: "COALESCE(SUM(appearances.knockdowns), 0)"
   }.freeze
 
+  # Everyone who fought at least once in this weight class during this era.
+  scope :in_pool, ->(weight_class:, era:) {
+    where(id: Appearance.with_era.where(bouts: { weight_class_id: weight_class }, eras: { id: era }).select(:fighter_id))
+  }
+
+  # Number of distinct fighters in every spinnable (weight class, era) pool:
+  # { [weight_class_id, era_id] => count }. One query for the whole grid.
+  def self.pool_sizes
+    Appearance.with_era
+      .joins(bout: :weight_class).merge(WeightClass.spinnable)
+      .group("bouts.weight_class_id", "eras.id")
+      .distinct.count(:fighter_id)
+  end
+
   # Adds UFC fight and finish counts to each fighter in one grouped query, so a
   # whole roster can be rated without a query per fighter.
   scope :with_ufc_record, -> {
