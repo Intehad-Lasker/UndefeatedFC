@@ -22,6 +22,10 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.cache_store = :null_store
 
+  # The null cache store would make rate limits no-ops; give them a real store
+  # that the test helper clears before each test.
+  config.x.rate_limit_store = ActiveSupport::Cache::MemoryStore.new
+
   # Render exception templates for rescuable exceptions and raise for other exceptions.
   config.action_dispatch.show_exceptions = :rescuable
 

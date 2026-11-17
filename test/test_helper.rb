@@ -12,6 +12,6 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    setup { Rails.configuration.x.rate_limit_store.clear }
   end
 end

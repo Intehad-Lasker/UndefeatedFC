@@ -3,6 +3,14 @@ module Api
     class DraftsController < BaseController
       include DraftRendering
 
+      CREATE_LIMIT = 20
+
+      # Rails' built-in limiter, counted per IP in the cache store (Solid Cache in
+      # production), so scripts can't flood the drafts table.
+      rate_limit to: CREATE_LIMIT, within: 1.minute, only: :create,
+        store: Rails.configuration.x.rate_limit_store || Rails.cache,
+        with: -> { render_error :too_many_requests, "rate_limited", "You're starting drafts too quickly. Try again in a minute." }
+
       def create
         draft = Draft.create!(player_id: current_player_id)
         render_draft(draft.id, status: :created)
