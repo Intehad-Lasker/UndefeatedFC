@@ -20,6 +20,7 @@ The goal is to go 15-0.
 ### Prerequisites
 
 - Ruby 3.3.6 (see `.ruby-version`)
+- Node 22 (for the React app in `web/`)
 - PostgreSQL 16, either installed locally or through Docker
 
 ### Database
@@ -40,6 +41,18 @@ bin/setup
 `bin/setup` installs gems, prepares the database and starts the server at
 http://localhost:3000. Use `bin/setup --skip-server` to only prepare.
 
+### Play locally
+
+Run Rails and the Vite dev server side by side, then open http://localhost:5173:
+
+```bash
+bin/rails server
+cd web && npm install && npm run dev
+```
+
+Vite proxies `/api` to Rails, so the browser sees a single origin, as it does in
+production, where Rails serves the built app (`cd web && npm run build`).
+
 In development, `bin/rails db:seed` also creates invented fighters and bouts so
 the game is playable before the scraper has run. To load real data instead, start
 from an empty fighters table and follow [scraper/README.md](scraper/README.md). See
@@ -57,6 +70,7 @@ bin/rails test        # unit, model and request tests
 bin/rubocop           # style
 bin/brakeman          # security static analysis
 bin/ci                # everything CI runs, locally
+cd web && npm test    # React components and the draft reducer
 ```
 
 CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
@@ -65,6 +79,7 @@ CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
 
 ```
 app/, config/, db/, test/   Rails application
+web/                        React app for players (see web/README.md)
 scraper/                    Python package that loads UFCStats data (see scraper/README.md)
 docs/                       roadmap, data model, API reference and architecture decision records (ADRs)
 ```

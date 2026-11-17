@@ -40,9 +40,9 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] HTTP caching and rate limiting
 
 ## M6 — React app (v0.1.0)
-- [ ] Spin wheels, fighter pool, slot board, results
-- [ ] Fighter search
-- [ ] Served by Rails in production
+- [x] Spin wheels, fighter pool, slot board, results
+- [x] Fighter search
+- [x] Served by Rails in production
 
 ## M7 — Accounts
 - [ ] Sign up, sign in, password reset
