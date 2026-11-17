@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_074432) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_074534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -110,6 +110,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_074432) do
     t.check_constraint "takedown_defense >= 0::numeric AND takedown_defense <= 1::numeric", name: "fighters_takedown_defense_between_0_and_1"
     t.check_constraint "takedowns_per_15_min >= 0::numeric", name: "fighters_takedowns_per_15_min_non_negative"
     t.check_constraint "wins >= 0", name: "fighters_wins_non_negative"
+  end
+
+  create_table "ingestion_runs", force: :cascade do |t|
+    t.string "source", default: "ufcstats", null: false
+    t.string "status", default: "running", null: false
+    t.datetime "started_at", null: false
+    t.datetime "finished_at"
+    t.integer "events_count", default: 0, null: false
+    t.integer "bouts_count", default: 0, null: false
+    t.integer "fighters_count", default: 0, null: false
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status", "finished_at"], name: "index_ingestion_runs_on_status_and_finished_at"
+    t.check_constraint "finished_at IS NULL OR finished_at >= started_at", name: "ingestion_runs_finishes_after_start"
+    t.check_constraint "status::text = ANY (ARRAY['running'::character varying, 'succeeded'::character varying, 'failed'::character varying]::text[])", name: "ingestion_runs_status_known"
   end
 
   create_table "weight_classes", force: :cascade do |t|

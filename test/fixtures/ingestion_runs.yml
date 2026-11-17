@@ -1,0 +1,13 @@
+succeeded:
+  status: succeeded
+  started_at: 2026-11-10 03:00:00
+  finished_at: 2026-11-10 03:12:30
+  events_count: 3
+  bouts_count: 3
+  fighters_count: 3
+
+failed:
+  status: failed
+  started_at: 2026-11-11 03:00:00
+  finished_at: 2026-11-11 03:00:05
+  error_message: "HTTP 503 from ufcstats.com"
