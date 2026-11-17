@@ -11,11 +11,11 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Architecture decision records for the stack
 
 ## M1 — Fight data model
-- [ ] Weight classes and eras as lookup tables
-- [ ] Fighters, events, bouts and appearances
-- [ ] Finish and record queries
-- [ ] Ingestion run tracking
-- [ ] Synthetic development data
+- [x] Weight classes and eras as lookup tables
+- [x] Fighters, events, bouts and appearances
+- [x] Finish and record queries
+- [x] Ingestion run tracking
+- [x] Synthetic development data
 
 ## M2 — Scraper (Python)
 - [ ] Rate-limited, cached fetcher

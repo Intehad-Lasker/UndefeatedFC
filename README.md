@@ -40,6 +40,10 @@ bin/setup
 `bin/setup` installs gems, prepares the database and starts the server at
 http://localhost:3000. Use `bin/setup --skip-server` to only prepare.
 
+In development, `bin/rails db:seed` also creates invented fighters and bouts so
+the game is playable before the scraper has run. See
+[docs/data-model.md](docs/data-model.md) for the schema.
+
 ## Tests and checks
 
 ```bash
@@ -55,5 +59,5 @@ CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
 
 ```
 app/, config/, db/, test/   Rails application
-docs/                       roadmap and architecture decision records (ADRs)
+docs/                       roadmap, data model and architecture decision records (ADRs)
 ```

@@ -1,0 +1,17 @@
+lightweight:
+  name: Lightweight
+  limit_lbs: 155
+  position: 4
+  spinnable: true
+
+welterweight:
+  name: Welterweight
+  limit_lbs: 170
+  position: 5
+  spinnable: true
+
+catch_weight:
+  name: Catch Weight
+  limit_lbs:
+  position: 14
+  spinnable: false

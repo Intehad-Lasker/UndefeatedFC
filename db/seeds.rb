@@ -1,9 +1,12 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# Loaded by bin/rails db:seed and db:setup. Safe to run more than once.
+require_relative "seeds/reference_data"
+require_relative "seeds/development_data"
+
+Seeds::ReferenceData.seed!
+
+# Invented fighters so the game works locally before the scraper has run.
+# Skipped once any fighters exist, so real data is never mixed with it.
+if Rails.env.development? && Fighter.none?
+  Seeds::DevelopmentData.seed!
+  puts "Seeded #{Fighter.count} synthetic fighters across #{Bout.count} bouts."
+end

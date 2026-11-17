@@ -1,0 +1,43 @@
+# 2013 Lightweight: striker knocks out grappler.
+striker_2013:
+  bout: lightweight_2013
+  fighter: striker
+  outcome: win
+  knockdowns: 2
+  sig_strikes_landed: 41
+
+grappler_2013:
+  bout: lightweight_2013
+  fighter: grappler
+  outcome: loss
+  sig_strikes_landed: 12
+  takedowns_landed: 1
+
+# 2018 Lightweight: wrestler outpoints striker.
+wrestler_2018:
+  bout: lightweight_2018
+  fighter: wrestler
+  outcome: win
+  sig_strikes_landed: 38
+  takedowns_landed: 6
+
+striker_2018:
+  bout: lightweight_2018
+  fighter: striker
+  outcome: loss
+  sig_strikes_landed: 44
+
+# 2023 Welterweight: grappler submits striker.
+grappler_2023:
+  bout: welterweight_2023
+  fighter: grappler
+  outcome: win
+  takedowns_landed: 2
+  submission_attempts: 2
+  sig_strikes_landed: 9
+
+striker_2023:
+  bout: welterweight_2023
+  fighter: striker
+  outcome: loss
+  sig_strikes_landed: 15
