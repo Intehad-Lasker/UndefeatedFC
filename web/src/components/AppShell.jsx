@@ -11,6 +11,7 @@ export default function AppShell() {
           <NavLink to="/" end>
             Play
           </NavLink>
+          <NavLink to="/fighters">Fighters</NavLink>
         </nav>
       </header>
       <main className="shell__main">
