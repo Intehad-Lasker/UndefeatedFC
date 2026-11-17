@@ -1,4 +1,5 @@
 import { vi } from 'vitest'
+import { meta } from './fixtures.js'
 
 // One mock of the API client for every page test. Use it from vi.mock:
 //   vi.mock('../api/client.js', async () => (await import('../test/apiMock.js')).apiMock())
@@ -17,4 +18,5 @@ export function apiMock() {
 export function stubDefaults(api, { user = null, dailyChallenge = { day: '2026-11-17', attempt: null } } = {}) {
   vi.mocked(api.currentSession).mockResolvedValue({ user })
   vi.mocked(api.dailyChallenge).mockResolvedValue(dailyChallenge)
+  vi.mocked(api.meta).mockResolvedValue(meta)
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
+import MatchRoom from '../match/MatchRoom.jsx'
 import { useMatch } from '../match/useMatch.js'
 
 function InviteLink() {
@@ -28,7 +29,7 @@ function InviteLink() {
 
 export default function MatchPage() {
   const { matchId } = useParams()
-  const { match, error, join } = useMatch(matchId)
+  const { match, error, join, pick } = useMatch(matchId)
 
   if (!match) {
     return error ? (
@@ -65,9 +66,10 @@ export default function MatchPage() {
         </div>
       )}
       {match.status !== 'waiting' && (
-        <p className="notice">
-          {match.players.map((player) => player.display_name).join(' vs. ')}
-        </p>
+        <>
+          <p className="notice">{match.players.map((player) => player.display_name).join(' vs. ')}</p>
+          <MatchRoom match={match} onPick={pick} />
+        </>
       )}
       {error && (
         <p role="alert" className="error">

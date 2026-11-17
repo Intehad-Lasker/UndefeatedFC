@@ -4,17 +4,20 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { subscribe } from '../api/cable.js'
 import { api } from '../api/client.js'
 import { stubDefaults } from '../test/apiMock.js'
+import { resetMetaForTests } from '../api/useMeta.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
 vi.mock('../api/client.js', async () => (await import('../test/apiMock.js')).apiMock())
 vi.mock('../api/cable.js', () => ({ subscribe: vi.fn() }))
 
 const players = [{ seat: 1, display_name: 'Host' }]
-const waiting = (yourSeat) => ({ id: 'm1', status: 'waiting', your_seat: yourSeat, current_seat: null, players, pool: null, boards: [], result: null })
+const emptyBoards = [1, 2].map((seat) => ({ seat, slots: [{ key: 'striking', label: 'Striking', rating: null, fighter: null }] }))
+const waiting = (yourSeat) => ({ id: 'm1', status: 'waiting', your_seat: yourSeat, current_seat: null, players, pool: null, boards: emptyBoards, result: null })
 
 let nudge
 beforeEach(() => {
   vi.resetAllMocks()
+  resetMetaForTests()
   stubDefaults(api)
   vi.mocked(subscribe).mockImplementation((channel, params, onMessage) => {
     nudge = onMessage
