@@ -1,0 +1,27 @@
+lightweight_2013:
+  ufcstats_id: synthetic-bout-2013
+  event: fight_night_2013
+  weight_class: lightweight
+  finish: ko_tko
+  finish_detail: KO/TKO
+  ending_round: 2
+  ending_time_seconds: 154
+
+lightweight_2018:
+  ufcstats_id: synthetic-bout-2018
+  event: numbered_2018
+  weight_class: lightweight
+  finish: decision
+  finish_detail: U-DEC
+  ending_round: 3
+  ending_time_seconds: 300
+
+welterweight_2023:
+  ufcstats_id: synthetic-bout-2023
+  event: numbered_2023
+  weight_class: welterweight
+  finish: submission
+  finish_detail: SUB
+  ending_round: 1
+  ending_time_seconds: 222
+  title_bout: true

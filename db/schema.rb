@@ -10,9 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_074311) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_074358) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "bouts", force: :cascade do |t|
+    t.string "ufcstats_id", null: false
+    t.bigint "event_id", null: false
+    t.bigint "weight_class_id", null: false
+    t.string "finish", null: false
+    t.string "finish_detail"
+    t.integer "ending_round"
+    t.integer "ending_time_seconds"
+    t.boolean "title_bout", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_bouts_on_event_id"
+    t.index ["ufcstats_id"], name: "index_bouts_on_ufcstats_id", unique: true
+    t.index ["weight_class_id"], name: "index_bouts_on_weight_class_id"
+    t.check_constraint "ending_round >= 1 AND ending_round <= 5", name: "bouts_ending_round_range"
+    t.check_constraint "ending_time_seconds >= 0 AND ending_time_seconds <= 300", name: "bouts_ending_time_range"
+    t.check_constraint "finish::text = ANY (ARRAY['ko_tko'::character varying, 'submission'::character varying, 'decision'::character varying, 'disqualification'::character varying, 'no_contest'::character varying, 'other'::character varying]::text[])", name: "bouts_finish_known"
+  end
 
   create_table "eras", force: :cascade do |t|
     t.string "name", null: false
@@ -84,4 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_074311) do
     t.index ["position"], name: "index_weight_classes_on_position", unique: true
     t.check_constraint "limit_lbs IS NULL OR limit_lbs > 0", name: "weight_classes_limit_lbs_positive"
   end
+
+  add_foreign_key "bouts", "events"
+  add_foreign_key "bouts", "weight_classes"
 end
