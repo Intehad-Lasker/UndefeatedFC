@@ -1,4 +1,5 @@
 import AppShell from './components/AppShell.jsx'
+import DraftPage from './pages/DraftPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
@@ -10,6 +11,7 @@ export const routes = [
     errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'drafts/:draftId', element: <DraftPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
