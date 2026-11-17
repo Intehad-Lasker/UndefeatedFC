@@ -29,10 +29,10 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Background refresh after each ingestion run
 
 ## M4 — Draft engine
-- [ ] Fighter pools by weight class and era
-- [ ] Server-side seeded spins
-- [ ] Pick validation with row locking
-- [ ] Fight simulation and scoring
+- [x] Fighter pools by weight class and era
+- [x] Server-side seeded spins
+- [x] Pick validation with row locking
+- [x] Fight simulation and scoring
 
 ## M5 — JSON API
 - [ ] Drafts, spins and picks
