@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       get "meta" => "meta#show"
-      resources :drafts, only: %i[create show]
+      resources :drafts, only: %i[create show] do
+        resources :rounds, only: :create
+      end
     end
   end
 end
