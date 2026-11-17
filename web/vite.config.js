@@ -4,11 +4,12 @@ import { defineConfig } from 'vite'
 const RAILS_URL = process.env.RAILS_URL ?? 'http://localhost:3000'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
   // Production builds go into Rails' public/ folder; Rails serves index.html
-  // for page routes and the static file server serves the hashed assets.
-  base: '/app/',
+  // for page routes and the static file server serves the hashed assets from
+  // /app/. The dev server keeps the root base so page URLs match production.
+  base: command === 'build' ? '/app/' : '/',
   build: {
     outDir: '../public/app',
     emptyOutDir: true,
@@ -26,4 +27,4 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
   },
-})
+}))
