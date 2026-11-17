@@ -10,7 +10,9 @@ module Admin
     private
 
     def require_admin
-      render "admin/forbidden", status: :forbidden unless Current.user&.admin?
+      # Explicit layout: Mission Control's controllers inherit this check but
+      # use their own layout, which needs a running queue to render.
+      render "admin/forbidden", layout: "admin", status: :forbidden unless Current.user&.admin?
     end
   end
 end

@@ -7,22 +7,25 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%# main_app. routes so this layout also renders inside Mission Control's engine. %>
   </head>
 
   <body class="admin">
     <header class="admin__header">
-      <%= link_to "UndefeatedFC admin", admin_root_path, class: "admin__brand" %>
+      <%= link_to "UndefeatedFC admin", main_app.admin_root_path, class: "admin__brand" %>
       <nav class="admin__nav">
-        <%= link_to "Dashboard", admin_root_path %>
-        <%= link_to "Fighters", admin_fighters_path %>
-        <%= link_to "Weight classes", admin_weight_classes_path %>
-        <%= link_to "Eras", admin_eras_path %>
-        <%= link_to "Data loads", admin_ingestion_runs_path %>
+        <%= link_to "Dashboard", main_app.admin_root_path %>
+        <%= link_to "Fighters", main_app.admin_fighters_path %>
+        <%= link_to "Weight classes", main_app.admin_weight_classes_path %>
+        <%= link_to "Eras", main_app.admin_eras_path %>
+        <%= link_to "Data loads", main_app.admin_ingestion_runs_path %>
+        <%# Mission Control needs Solid Queue (production); development runs jobs in-process. %>
+        <%= link_to "Jobs", "/admin/jobs" if ActiveJob::Base.queue_adapter_name == "solid_queue" %>
       </nav>
       <% if Current.user %>
         <span class="admin__user">
           <%= Current.user.display_name %>
-          <%= button_to "Sign out", session_path, method: :delete, class: "admin__signout" %>
+          <%= button_to "Sign out", main_app.session_path, method: :delete, class: "admin__signout" %>
         </span>
       <% end %>
     </header>
