@@ -1,0 +1,19 @@
+<%= turbo_frame_tag @fighter do %>
+  <%= form_with model: [ :admin, @fighter ], class: "admin__row admin__row--form" do |form| %>
+    <% if @fighter.errors.any? %>
+      <p class="admin__errors"><%= @fighter.errors.full_messages.to_sentence %></p>
+    <% end %>
+    <%= form.text_field :name, aria: { label: "Name" } %>
+    <%= form.text_field :nickname, aria: { label: "Nickname" } %>
+    <%= form.select :stance, [ "Orthodox", "Southpaw", "Switch", "Open Stance", "Sideways" ], { include_blank: "—" }, aria: { label: "Stance" } %>
+    <span>
+      <%= form.number_field :height_cm, aria: { label: "Height (cm)" }, class: "admin__narrow" %>
+      <%= form.number_field :reach_cm, aria: { label: "Reach (cm)" }, class: "admin__narrow" %>
+    </span>
+    <label><%= form.check_box :locked %> Locked</label>
+    <span>
+      <%= form.submit "Save" %>
+      <%= link_to "Cancel", admin_fighter_path(@fighter) %>
+    </span>
+  <% end %>
+<% end %>

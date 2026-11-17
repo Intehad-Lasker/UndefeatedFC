@@ -1,0 +1,21 @@
+<% content_for :title, "Fighters" %>
+<h1>Fighters</h1>
+
+<%= form_with url: admin_fighters_path, method: :get, class: "admin__search" do |form| %>
+  <%= form.search_field :q, value: @query, placeholder: "Search by name or nickname", aria: { label: "Search fighters" } %>
+  <%= form.submit "Search", name: nil %>
+<% end %>
+
+<p class="admin__hint">Locked fighters keep your corrections; the scraper won't overwrite them.</p>
+
+<div class="admin__rows" id="fighters">
+  <div class="admin__row admin__row--head">
+    <span>Name</span><span>Nickname</span><span>Stance</span><span>Height / reach</span><span>Locked</span><span></span>
+  </div>
+  <%= render partial: "fighter", collection: @fighters %>
+</div>
+
+<nav class="admin__pager">
+  <%= link_to "← Previous", admin_fighters_path(q: @query.presence, page: @page - 1) if @page > 1 %>
+  <%= link_to "Next →", admin_fighters_path(q: @query.presence, page: @page + 1) if @next_page %>
+</nav>

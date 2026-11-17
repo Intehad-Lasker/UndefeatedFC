@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root "dashboard#show"
+    resources :fighters, only: %i[index show edit update]
   end
 
   namespace :api, defaults: { format: :json } do
