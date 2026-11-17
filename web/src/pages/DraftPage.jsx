@@ -2,10 +2,11 @@ import { useNavigate, useParams } from 'react-router'
 import { api } from '../api/client.js'
 import { useMeta } from '../api/useMeta.js'
 import FighterPool from '../components/FighterPool.jsx'
+import PickTray from '../components/PickTray.jsx'
 import ResultCard from '../components/ResultCard.jsx'
 import SlotBoard from '../components/SlotBoard.jsx'
 import SpinWheels from '../components/SpinWheels.jsx'
-import { selectedFighter } from '../draft/draftReducer.js'
+import { openSlots, selectedFighter } from '../draft/draftReducer.js'
 import { useDraft } from '../draft/useDraft.js'
 
 export default function DraftPage() {
@@ -85,6 +86,10 @@ export default function DraftPage() {
             disabled={!draft.owned || phase === 'submitting'}
           />
         </>
+      )}
+
+      {draft.owned && phase === 'picking' && (
+        <PickTray fighter={selectedFighter(state)} openSlots={openSlots(state)} onPick={pick} />
       )}
 
       {phase === 'complete' && (

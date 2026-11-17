@@ -121,3 +121,15 @@ test('a finished draft shows the title run and can start another', async () => {
 
   expect(router.state.location.pathname).toBe('/drafts/d2')
 })
+
+test('the pick tray drafts the selected fighter too', async () => {
+  vi.mocked(api.getDraft).mockResolvedValue(draftPicking)
+  vi.mocked(api.pick).mockResolvedValue(draftReady)
+  renderRoute('/drafts/d1')
+
+  await userEvent.click(await screen.findByRole('button', { name: /Bea Garrow/ }))
+  const tray = screen.getByRole('region', { name: 'Draft the selected fighter' })
+  await userEvent.click(within(tray).getByRole('button', { name: 'Striking' }))
+
+  expect(api.pick).toHaveBeenCalledWith('d1', 9, 'striking')
+})
