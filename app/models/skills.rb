@@ -5,7 +5,8 @@ module Skills
   class UnknownSkill < ArgumentError; end
 
   ALL = [
-    Striking.new
+    Striking.new,
+    Power.new
   ].freeze
 
   def self.all = ALL
