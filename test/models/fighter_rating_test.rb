@@ -2,7 +2,7 @@ require "test_helper"
 
 class FighterRatingTest < ActiveSupport::TestCase
   test "accepts a registered skill and a value from 0 to 99" do
-    assert FighterRating.new(fighter: fighters(:grappler), skill: "submissions", value: 99).valid?
+    assert FighterRating.new(fighter: fighters(:grappler), skill: "power", value: 99).valid?
   end
 
   test "rejects a skill that is not registered" do
