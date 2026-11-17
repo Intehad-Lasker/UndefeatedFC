@@ -12,6 +12,8 @@ module Api
 
       def show
         @fighter = Fighter.with_ufc_record.find(params[:id])
+        return unless stale?(@fighter) # the scraper bumps updated_at whenever it reloads a fighter
+
         @appearances = Appearance.where(fighter: @fighter)
           .includes(bout: [ :event, :weight_class, { appearances: :fighter } ])
           .order("events.held_on DESC").references(:events)

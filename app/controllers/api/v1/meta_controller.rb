@@ -7,6 +7,8 @@ module Api
       def show
         @weight_classes = WeightClass.spinnable.ordered
         @eras = Era.ordered
+        # Same for every visitor, so shared caches may store it.
+        fresh_when(etag: [ @weight_classes, @eras, Skills.keys ], public: true)
       end
     end
   end
