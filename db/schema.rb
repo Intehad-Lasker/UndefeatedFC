@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_175853) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_180146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,6 +51,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_175853) do
     t.check_constraint "ending_round >= 1 AND ending_round <= 5", name: "bouts_ending_round_range"
     t.check_constraint "ending_time_seconds >= 0 AND ending_time_seconds <= 300", name: "bouts_ending_time_range"
     t.check_constraint "finish::text = ANY (ARRAY['ko_tko'::character varying, 'submission'::character varying, 'decision'::character varying, 'disqualification'::character varying, 'no_contest'::character varying, 'other'::character varying]::text[])", name: "bouts_finish_known"
+  end
+
+  create_table "drafts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "seed", null: false
+    t.string "status", default: "in_progress", null: false
+    t.integer "overall"
+    t.integer "wins"
+    t.integer "losses"
+    t.jsonb "fight_log", default: [], null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
+    t.check_constraint "overall >= 0 AND overall <= 99", name: "drafts_overall_range"
+    t.check_constraint "status::text <> 'completed'::text OR overall IS NOT NULL AND wins IS NOT NULL AND losses IS NOT NULL AND completed_at IS NOT NULL", name: "drafts_completed_has_result"
+    t.check_constraint "status::text = ANY (ARRAY['in_progress'::character varying, 'completed'::character varying]::text[])", name: "drafts_status_known"
+    t.check_constraint "wins >= 0 AND losses >= 0", name: "drafts_record_non_negative"
   end
 
   create_table "eras", force: :cascade do |t|

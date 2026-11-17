@@ -1,0 +1,19 @@
+fresh:
+  seed: 42
+  status: in_progress
+
+undefeated:
+  seed: 7
+  status: completed
+  overall: 91
+  wins: 15
+  losses: 0
+  completed_at: 2026-11-15 20:00:00
+
+beaten:
+  seed: 99
+  status: completed
+  overall: 63
+  wins: 9
+  losses: 6
+  completed_at: 2026-11-16 20:00:00
