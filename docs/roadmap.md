@@ -62,8 +62,8 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Job dashboard
 
 ## M11 — Head-to-head
-- [ ] Invite links and live snake drafts
-- [ ] Head-to-head fight simulation
+- [x] Invite links and live snake drafts
+- [x] Head-to-head fight simulation
 
 ## M12 — Ship (v1.0.0)
 - [ ] End-to-end browser test
