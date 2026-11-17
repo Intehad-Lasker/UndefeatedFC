@@ -26,15 +26,17 @@ class Fighter < ApplicationRecord
   }.freeze
 
   # Name or nickname search that tolerates typos: substring matches (ILIKE) plus
-  # trigram similarity on the name, best matches first. Backed by a GIN index.
+  # trigram word similarity (<%), which compares the query with the closest part
+  # of the name, so "ferriera" finds "Tomas Ferreira". Best matches first; the
+  # GIN trigram index serves both conditions. Threshold: config/database.yml.
   scope :search, ->(query) {
     term = query.to_s.squish
     if term.empty?
       none
     else
-      where("fighters.name ILIKE :like OR fighters.nickname ILIKE :like OR fighters.name % :term",
+      where("fighters.name ILIKE :like OR fighters.nickname ILIKE :like OR :term <% fighters.name",
         like: "%#{sanitize_sql_like(term)}%", term: term)
-        .order(Arel.sql(sanitize_sql_array([ "similarity(fighters.name, ?) DESC, fighters.name", term ])))
+        .order(Arel.sql(sanitize_sql_array([ "word_similarity(?, fighters.name) DESC, fighters.name", term ])))
     end
   }
 

@@ -22,6 +22,10 @@ default: &default
   host: <%= ENV["DB_HOST"] %>
   username: <%= ENV["DB_USER"] %>
   password: <%= ENV["DB_PASSWORD"] %>
+  variables:
+    # Fighter search (Fighter.search) matches a query this similar to any part
+    # of a name. pg_trgm's default of 0.6 misses one-word typos like "ferriera".
+    pg_trgm.word_similarity_threshold: 0.4
 
 
 development:

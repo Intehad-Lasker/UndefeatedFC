@@ -9,6 +9,14 @@ class FighterSearchTest < ActiveSupport::TestCase
     assert_equal fighters(:grappler), Fighter.search("Tomas Ferriera").first
   end
 
+  test "finds a fighter from a misspelled last name alone" do
+    assert_equal [ fighters(:grappler) ], Fighter.search("ferriera").to_a
+  end
+
+  test "does not match unrelated names" do
+    assert_empty Fighter.search("zzyzx")
+  end
+
   test "finds a fighter by nickname" do
     assert_equal [ fighters(:striker) ], Fighter.search("metronome").to_a
   end
