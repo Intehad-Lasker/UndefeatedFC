@@ -70,6 +70,9 @@ Rails.application.configure do
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
+  # Strict loading violations are logged, not raised, so a missed preload never breaks a request.
+  config.active_record.action_on_strict_loading_violation = :log
+
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 

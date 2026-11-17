@@ -35,5 +35,14 @@ module UndefeatedFc
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Lazy-loading an association must be explicit (includes/preload). This turns
+    # N+1 queries into errors in development and test instead of slow pages later.
+    config.active_record.strict_loading_by_default = true
+
+    config.generators do |g|
+      g.helper false
+      g.system_tests nil
+    end
   end
 end
