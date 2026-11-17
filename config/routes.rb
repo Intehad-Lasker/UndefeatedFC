@@ -13,4 +13,12 @@ Rails.application.routes.draw do
       resources :fighters, only: %i[index show]
     end
   end
+
+  # Any other extension-less path is a page in the React app. Paths with an
+  # extension (a missing .png) and Rails' own namespaces still 404 normally.
+  root "spa#show"
+  get "*path", to: "spa#show", format: false,
+    constraints: ->(request) {
+      File.extname(request.path).empty? && !request.path.start_with?("/api/", "/rails/", "/admin", "/cable")
+    }
 end

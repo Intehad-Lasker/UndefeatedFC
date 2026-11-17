@@ -29,6 +29,9 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+/public/app
+/web/node_modules/
+/scraper/
 
 # Ignore CI service files.
 /.github

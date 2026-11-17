@@ -6,6 +6,13 @@ const RAILS_URL = process.env.RAILS_URL ?? 'http://localhost:3000'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // Production builds go into Rails' public/ folder; Rails serves index.html
+  // for page routes and the static file server serves the hashed assets.
+  base: '/app/',
+  build: {
+    outDir: '../public/app',
+    emptyOutDir: true,
+  },
   server: {
     // In development the React app and the API share an origin through this
     // proxy, exactly as they do in production, so cookies and CSRF behave the
