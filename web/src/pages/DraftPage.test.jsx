@@ -62,3 +62,13 @@ test('an unknown draft shows the error', async () => {
 
   expect(await screen.findByRole('alert')).toHaveTextContent('That draft does not exist.')
 })
+
+test('the open round shows its pool and lets the owner select a fighter', async () => {
+  vi.mocked(api.getDraft).mockResolvedValue(draftPicking)
+  renderRoute('/drafts/d1')
+
+  const ace = await screen.findByRole('button', { name: /Ace Ardent/ })
+  await userEvent.click(ace)
+
+  expect(ace).toHaveAttribute('aria-pressed', 'true')
+})

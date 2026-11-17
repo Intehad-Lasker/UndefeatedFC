@@ -1,12 +1,13 @@
 import { useParams } from 'react-router'
 import { useMeta } from '../api/useMeta.js'
+import FighterPool from '../components/FighterPool.jsx'
 import SpinWheels from '../components/SpinWheels.jsx'
 import { useDraft } from '../draft/useDraft.js'
 
 export default function DraftPage() {
   const { draftId } = useParams()
   const meta = useMeta()
-  const { state, spin, finishReveal } = useDraft(draftId)
+  const { state, spin, finishReveal, selectFighter } = useDraft(draftId)
   const { draft, phase, error } = state
 
   if (phase === 'error') {
@@ -47,10 +48,18 @@ export default function DraftPage() {
         </button>
       )}
 
-      {phase === 'picking' && round && (
-        <p className="draft__pool-summary">
-          {draft.open_round.pool.length} fighters fought at {round.weight_class.name} in the {round.era.label} era.
-        </p>
+      {['picking', 'submitting'].includes(phase) && round && (
+        <>
+          <p className="draft__pool-summary">
+            {draft.open_round.pool.length} fighters fought at {round.weight_class.name} in the {round.era.label} era.
+          </p>
+          <FighterPool
+            pool={draft.open_round.pool}
+            selectedId={state.selectedFighterId}
+            onSelect={selectFighter}
+            disabled={!draft.owned || phase === 'submitting'}
+          />
+        </>
       )}
 
       {error && (
