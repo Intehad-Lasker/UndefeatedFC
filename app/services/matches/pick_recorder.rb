@@ -22,6 +22,7 @@ module Matches
         pick = @match.picks.create!(number: @match.next_pick_number, seat: seat, fighter: fighter, slot: skill.key,
                                     rating: FighterRating.where(fighter: fighter, skill: skill.key).pick(:value) || 0)
         Finisher.new(@match).call if @match.picks.size == Match::PICKS
+        @match.announce_change
         pick
       end
     rescue ActiveRecord::RecordNotUnique

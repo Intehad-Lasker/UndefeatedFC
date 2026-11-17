@@ -18,6 +18,7 @@ module Matches
         player = MatchPlayer.create!(match: @match, seat: 2, player_id: @player_id, user: @user,
                                      display_name: @user&.display_name || "Player 2")
         @match.update!(status: :drafting)
+        @match.announce_change
         player
       end
     end

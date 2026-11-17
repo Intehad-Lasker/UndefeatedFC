@@ -28,6 +28,13 @@ class Match < ApplicationRecord
 
   def self.round_for_pick(number) = (number + 1) / 2
 
+  # Queues a live update once the current transaction commits, so a rolled-back
+  # join or pick is never announced.
+  def announce_change
+    match_id = id
+    ActiveRecord.after_all_transactions_commit { MatchBroadcastJob.perform_later(match_id) }
+  end
+
   # Locks the match row (SELECT ... FOR UPDATE) and reloads players and picks,
   # so two players' simultaneous requests are handled one after the other.
   def lock_with_everything!
