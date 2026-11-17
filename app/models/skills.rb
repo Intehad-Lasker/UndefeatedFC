@@ -6,7 +6,8 @@ module Skills
 
   ALL = [
     Striking.new,
-    Power.new
+    Power.new,
+    Wrestling.new
   ].freeze
 
   def self.all = ALL
