@@ -2,7 +2,7 @@
 
 from bs4 import BeautifulSoup, Tag
 
-from ufc_scraper.parsers.text import clean, parse_date, ufcstats_id
+from ufc_scraper.parsers.text import clean, labelled_items, parse_date, ufcstats_id
 from ufc_scraper.records import BoutRecord, EventDetail, FighterResult
 
 # Columns of the fight table, left to right.
@@ -20,7 +20,7 @@ OUTCOMES = {
 
 def parse_event_page(html: str, url: str) -> EventDetail:
     soup = BeautifulSoup(html, "html.parser")
-    details = _labelled_items(soup)
+    details = labelled_items(soup)
 
     return EventDetail(
         ufcstats_id=ufcstats_id(url),
@@ -33,18 +33,6 @@ def parse_event_page(html: str, url: str) -> EventDetail:
             if (bout := _parse_bout(row)) is not None
         ),
     )
-
-
-def _labelled_items(soup: BeautifulSoup) -> dict[str, str]:
-    """Reads "Date: April 13, 2024" style list items into {"date": "April 13, 2024"}."""
-    items = {}
-    for item in soup.select("li.b-list__box-list-item"):
-        label = item.select_one("i.b-list__box-item-title")
-        if label is None:
-            continue
-        key = clean(label.get_text()).rstrip(":").lower()
-        items[key] = clean(item.get_text().replace(label.get_text(), "", 1))
-    return items
 
 
 def _parse_bout(row: Tag) -> BoutRecord | None:
