@@ -8,7 +8,8 @@ module Skills
     Striking.new,
     Power.new,
     Wrestling.new,
-    Submissions.new
+    Submissions.new,
+    Defense.new
   ].freeze
 
   def self.all = ALL
