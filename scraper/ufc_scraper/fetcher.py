@@ -2,6 +2,7 @@
 
 import time
 from collections.abc import Callable
+from typing import Protocol
 
 import requests
 
@@ -11,6 +12,13 @@ RETRYABLE_STATUSES = frozenset({429, 500, 502, 503, 504})
 
 class FetchError(RuntimeError):
     """Raised when a page cannot be fetched."""
+
+
+class PageSource(Protocol):
+    """Anything that turns a URL into HTML. Parsers and the pipeline depend on this,
+    not on a concrete fetcher, so caching and test doubles slot in freely."""
+
+    def get(self, url: str) -> str: ...
 
 
 class Fetcher:
