@@ -8,7 +8,7 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Strict loading to catch N+1 queries early
 - [x] CI: RuboCop, Brakeman, bundler-audit, tests
 - [x] README with setup steps
-- [ ] Architecture decision records for the stack
+- [x] Architecture decision records for the stack
 
 ## M1 — Fight data model
 - [ ] Weight classes and eras as lookup tables
