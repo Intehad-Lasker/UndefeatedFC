@@ -1,0 +1,21 @@
+<% content_for :title, "Weight classes" %>
+<h1>Weight classes</h1>
+<p class="admin__hint">Only spinnable divisions can come up on a spin.</p>
+<table>
+  <thead><tr><th>Division</th><th>Limit</th><th>Bouts</th><th>Spinnable</th><th></th></tr></thead>
+  <tbody>
+    <% @weight_classes.each do |weight_class| %>
+      <tr id="<%= dom_id(weight_class) %>">
+        <td><%= weight_class.name %></td>
+        <td><%= weight_class.limit_lbs ? "#{weight_class.limit_lbs} lbs" : "—" %></td>
+        <td><%= number_with_delimiter(@bout_counts.fetch(weight_class.id, 0)) %></td>
+        <td><%= weight_class.spinnable? ? "Yes" : "No" %></td>
+        <td>
+          <%= button_to weight_class.spinnable? ? "Disable" : "Enable",
+                admin_weight_class_path(weight_class),
+                method: :patch, params: { weight_class: { spinnable: !weight_class.spinnable? } } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

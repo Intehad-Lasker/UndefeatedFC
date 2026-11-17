@@ -28,6 +28,9 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# Web dashboard for Solid Queue jobs, mounted at /admin/jobs for admins
+gem "mission_control-jobs", "~> 1.3"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 

@@ -1,0 +1,32 @@
+<% content_for :title, "Data loads" %>
+<h1>Data loads</h1>
+<p class="admin__hint">
+  Written by the Python scraper. Ratings refresh automatically after each successful load;
+  use the button to recompute them now.
+</p>
+<%= button_to "Recalculate ratings now", refresh_ratings_admin_ingestion_runs_path %>
+
+<table>
+  <thead>
+    <tr><th>Started</th><th>Status</th><th>Events</th><th>Bouts</th><th>Fighters</th><th>Took</th><th>Ratings refreshed</th></tr>
+  </thead>
+  <tbody>
+    <% @runs.each do |run| %>
+      <tr id="<%= dom_id(run) %>">
+        <td><%= run.started_at.to_fs(:short) %></td>
+        <td>
+          <%= run.status.humanize %>
+          <% if run.error_message.present? %><br><small><%= run.error_message %></small><% end %>
+        </td>
+        <td><%= run.events_count %></td>
+        <td><%= run.bouts_count %></td>
+        <td><%= run.fighters_count %></td>
+        <td><%= run.duration ? distance_of_time_in_words(run.duration) : "—" %></td>
+        <td><%= run.ratings_refreshed_at&.to_fs(:short) || "—" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if @runs.empty? %>
+  <p>No loads yet. Run <code>ufc-scraper run</code> (see scraper/README.md).</p>
+<% end %>

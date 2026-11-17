@@ -58,6 +58,17 @@ the game is playable before the scraper has run. To load real data instead, star
 from an empty fighters table and follow [scraper/README.md](scraper/README.md). See
 [docs/data-model.md](docs/data-model.md) for the schema.
 
+## Admin
+
+`/admin` is for staff: fix fighter details inline (corrections are locked
+against re-scrapes), choose which divisions can be spun, adjust eras, review
+scraper runs, recalculate ratings, and (in production) watch jobs in Mission
+Control. Promote an account with:
+
+```bash
+bin/rails admin:grant[you@example.com]
+```
+
 ## API
 
 The game is served as a JSON API under `/api/v1`: meta, drafts, spins, picks

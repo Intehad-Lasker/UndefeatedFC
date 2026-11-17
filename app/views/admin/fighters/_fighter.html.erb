@@ -1,0 +1,10 @@
+<%= turbo_frame_tag fighter do %>
+  <div class="admin__row">
+    <span><strong><%= fighter.name %></strong></span>
+    <span><%= fighter.nickname %></span>
+    <span><%= fighter.stance %></span>
+    <span><%= [ fighter.height_cm, fighter.reach_cm ].map { |cm| cm ? "#{cm} cm" : "—" }.join(" / ") %></span>
+    <span><%= fighter.locked? ? "Yes" : "No" %></span>
+    <span><%= link_to "Edit", edit_admin_fighter_path(fighter) %></span>
+  </div>
+<% end %>

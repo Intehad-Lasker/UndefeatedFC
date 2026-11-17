@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_225352) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_230529) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -163,6 +163,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_225352) do
     t.decimal "takedown_defense", precision: 4, scale: 3, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "locked", default: false, null: false
     t.index ["name"], name: "index_fighters_on_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["ufcstats_id"], name: "index_fighters_on_ufcstats_id", unique: true
     t.check_constraint "draws >= 0", name: "fighters_draws_non_negative"
@@ -211,6 +212,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_225352) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "display_name", null: false
+    t.boolean "admin", default: false, null: false
     t.index "lower((display_name)::text)", name: "index_users_on_lower_display_name", unique: true
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end

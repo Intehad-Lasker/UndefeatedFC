@@ -40,6 +40,11 @@ module UndefeatedFc
     # N+1 queries into errors in development and test instead of slow pages later.
     config.active_record.strict_loading_by_default = true
 
+    # The jobs dashboard sits behind the same sign-in and admin check as the rest
+    # of /admin, instead of the gem's default HTTP basic auth.
+    config.mission_control.jobs.base_controller_class = "Admin::BaseController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
+
     config.generators do |g|
       g.helper false
       g.system_tests nil

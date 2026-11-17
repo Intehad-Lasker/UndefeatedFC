@@ -57,9 +57,9 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Live updates over Action Cable
 
 ## M10 — Admin (v0.3.0)
-- [ ] Data corrections with Hotwire
-- [ ] Ingestion history and rating refresh
-- [ ] Job dashboard
+- [x] Data corrections with Hotwire
+- [x] Ingestion history and rating refresh
+- [x] Job dashboard
 
 ## M11 — Head-to-head
 - [ ] Invite links and live snake drafts

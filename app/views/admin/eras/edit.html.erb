@@ -1,0 +1,11 @@
+<% content_for :title, "Edit #{@era.name}" %>
+<h1>Edit <%= @era.name %></h1>
+<%= form_with model: [ :admin, @era ], class: "admin__form" do |form| %>
+  <% if @era.errors.any? %>
+    <p class="admin__errors"><%= @era.errors.full_messages.to_sentence %></p>
+  <% end %>
+  <p><%= form.label :name %> <%= form.text_field :name %></p>
+  <p><%= form.label :starts_on, "From" %> <%= form.date_field :starts_on %></p>
+  <p><%= form.label :ends_on, "To (blank for ongoing)" %> <%= form.date_field :ends_on %></p>
+  <p><%= form.submit "Save" %> <%= link_to "Cancel", admin_eras_path %></p>
+<% end %>
