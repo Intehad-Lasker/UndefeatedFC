@@ -760,3 +760,57 @@ a.button {
   font-size: 0.8rem;
   font-weight: 800;
 }
+
+/* Leaderboard */
+.tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  margin-bottom: 0.75rem;
+}
+
+.tabs__tab {
+  font: inherit;
+  font-weight: 700;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tabs__tab[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.standings {
+  width: 100%;
+  max-width: 40rem;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.standings th,
+.standings td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.standings th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.standings__row--undefeated td:nth-child(3) {
+  color: var(--gold);
+  font-weight: 900;
+}

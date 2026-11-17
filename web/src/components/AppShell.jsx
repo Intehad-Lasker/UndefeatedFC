@@ -13,6 +13,7 @@ export default function AppShell() {
             Play
           </NavLink>
           <NavLink to="/fighters">Fighters</NavLink>
+          <NavLink to="/leaderboard">Leaderboard</NavLink>
           <AccountMenu />
         </nav>
       </header>
