@@ -5,6 +5,7 @@
 class Draft < ApplicationRecord
   SEED_RANGE = 1...(2**62)
 
+  belongs_to :user, optional: true
   has_many :rounds, -> { order(:number) }, class_name: "DraftRound", inverse_of: :draft, dependent: :delete_all
 
   enum :status, { in_progress: "in_progress", completed: "completed" }, validate: true
@@ -19,7 +20,18 @@ class Draft < ApplicationRecord
 
   scope :with_rounds, -> { includes(rounds: %i[weight_class era fighter]) }
 
-  def played_by?(player_id) = player_id.present? && self.player_id == player_id
+  # Guest drafts belong to the browser that started them; claimed drafts belong
+  # to the account.
+  def played_by?(player_id, user = nil)
+    return user_id == user.id if user_id && user
+
+    player_id.present? && self.player_id == player_id
+  end
+
+  # Moves a browser's guest drafts onto an account when that browser signs in.
+  def self.claim_for(user, player_id:)
+    where(player_id: player_id, user_id: nil).update_all(user_id: user.id, updated_at: Time.current)
+  end
 
   def record = completed? ? "#{wins}-#{losses}" : nil
   def undefeated? = completed? && losses.zero?

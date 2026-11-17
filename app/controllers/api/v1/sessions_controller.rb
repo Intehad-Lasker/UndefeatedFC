@@ -15,7 +15,7 @@ module Api
       def create
         @user = User.authenticate_by(params.permit(:email_address, :password))
         if @user
-          start_new_session_for(@user)
+          sign_in(@user)
           render :show, status: :created
         else
           render_error :unauthorized, "invalid_credentials", "That email address and password don't match."

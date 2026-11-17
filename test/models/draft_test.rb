@@ -85,3 +85,36 @@ class DraftStateTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::StrictLoadingViolationError) { Draft.find(drafts(:fresh).id).open_round }
   end
 end
+
+class DraftOwnershipTest < ActiveSupport::TestCase
+  # player_id is a uuid column, so the browser ids must be real UUIDs.
+  BROWSER_A = "6b1f1c1e-0000-4000-8000-00000000000a".freeze
+  BROWSER_B = "6b1f1c1e-0000-4000-8000-00000000000b".freeze
+
+  test "a guest draft belongs to the browser that started it" do
+    draft = Draft.create!(player_id: BROWSER_A)
+
+    assert draft.played_by?(BROWSER_A)
+    assert_not draft.played_by?(BROWSER_B)
+    assert_not draft.played_by?(nil)
+  end
+
+  test "an account's draft belongs to the account on any browser" do
+    draft = Draft.create!(player_id: BROWSER_A, user: users(:one))
+
+    assert draft.played_by?(BROWSER_B, users(:one))
+    assert_not draft.played_by?(BROWSER_A, users(:two))
+  end
+
+  test "claim_for moves a browser's guest drafts onto the account" do
+    guest = Draft.create!(player_id: BROWSER_A)
+    other_browser = Draft.create!(player_id: BROWSER_B)
+    someone_elses = Draft.create!(player_id: BROWSER_A, user: users(:two))
+
+    Draft.claim_for(users(:one), player_id: BROWSER_A)
+
+    assert_equal users(:one).id, guest.reload.user_id
+    assert_nil other_browser.reload.user_id
+    assert_equal users(:two).id, someone_elses.reload.user_id
+  end
+end

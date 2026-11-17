@@ -12,7 +12,7 @@ module Api
         with: -> { render_error :too_many_requests, "rate_limited", "You're starting drafts too quickly. Try again in a minute." }
 
       def create
-        draft = Draft.create!(player_id: current_player_id)
+        draft = Draft.create!(player_id: current_player_id, user: current_user)
         render_draft(draft.id, status: :created)
       end
 
@@ -21,7 +21,8 @@ module Api
       # fighter data (the open round's pool).
       def show
         draft = Draft.find(params[:id])
-        render_draft(draft.id) if stale?(etag: [ draft, draft.played_by?(current_player_id), Fighter.maximum(:updated_at) ])
+        owned = draft.played_by?(current_player_id, current_user)
+        render_draft(draft.id) if stale?(etag: [ draft, owned, Fighter.maximum(:updated_at) ])
       end
     end
   end

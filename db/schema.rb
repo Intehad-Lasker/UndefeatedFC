@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_183536) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_183815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -87,8 +87,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183536) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "player_id"
+    t.bigint "user_id"
     t.index ["player_id"], name: "index_drafts_on_player_id"
     t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
+    t.index ["user_id", "created_at"], name: "index_drafts_on_user_id_and_created_at"
     t.check_constraint "overall >= 0 AND overall <= 99", name: "drafts_overall_range"
     t.check_constraint "status::text <> 'completed'::text OR overall IS NOT NULL AND wins IS NOT NULL AND losses IS NOT NULL AND completed_at IS NOT NULL", name: "drafts_completed_has_result"
     t.check_constraint "status::text = ANY (ARRAY['in_progress'::character varying, 'completed'::character varying]::text[])", name: "drafts_status_known"
@@ -222,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_183536) do
   add_foreign_key "draft_rounds", "eras"
   add_foreign_key "draft_rounds", "fighters"
   add_foreign_key "draft_rounds", "weight_classes"
+  add_foreign_key "drafts", "users", on_delete: :nullify
   add_foreign_key "fighter_ratings", "fighters"
   add_foreign_key "sessions", "users"
 end

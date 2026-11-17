@@ -8,7 +8,7 @@ module Api
 
       def create
         @user = User.create!(params.expect(user: %i[email_address display_name password]))
-        start_new_session_for(@user)
+        sign_in(@user)
         render "api/v1/sessions/show", status: :created
       end
     end

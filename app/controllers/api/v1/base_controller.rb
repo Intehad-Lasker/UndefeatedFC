@@ -56,6 +56,11 @@ module Api
 
       def current_user = (Current.user if authenticated?)
 
+      def sign_in(user)
+        start_new_session_for(user)
+        Draft.claim_for(user, player_id: current_player_id)
+      end
+
       # Called by require_authentication; JSON clients get a 401, not a redirect.
       def request_authentication
         render_error :unauthorized, "unauthorized", "Sign in to do that."
