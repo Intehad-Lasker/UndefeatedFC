@@ -9,7 +9,8 @@ module Skills
     Power.new,
     Wrestling.new,
     Submissions.new,
-    Defense.new
+    Defense.new,
+    Chin.new
   ].freeze
 
   def self.all = ALL

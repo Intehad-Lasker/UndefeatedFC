@@ -3,6 +3,10 @@ require "test_helper"
 class SkillsTest < ActiveSupport::TestCase
   class ReachAdvantage < Skills::Base; end
 
+  test "registers the six draft slots in display order" do
+    assert_equal %w[striking power wrestling submissions defense chin], Skills.keys
+  end
+
   test "every registered skill is a Skills::Base with a unique key" do
     assert Skills.all.all?(Skills::Base)
     assert_equal Skills.keys.uniq, Skills.keys
