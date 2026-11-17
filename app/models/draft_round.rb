@@ -1,7 +1,7 @@
 # One spin of a draft: the weight class and era it landed on, and (once picked)
 # the fighter chosen and the slot they fill.
 class DraftRound < ApplicationRecord
-  belongs_to :draft
+  belongs_to :draft, touch: true # a spin or pick changes the draft's cache key
   belongs_to :weight_class
   belongs_to :era
   belongs_to :fighter, optional: true

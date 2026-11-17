@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_180229) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_181239) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "appearances", force: :cascade do |t|
     t.bigint "bout_id", null: false
@@ -85,6 +86,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_180229) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "player_id"
+    t.index ["player_id"], name: "index_drafts_on_player_id"
     t.index ["status", "overall"], name: "index_drafts_on_status_and_overall"
     t.check_constraint "overall >= 0 AND overall <= 99", name: "drafts_overall_range"
     t.check_constraint "status::text <> 'completed'::text OR overall IS NOT NULL AND wins IS NOT NULL AND losses IS NOT NULL AND completed_at IS NOT NULL", name: "drafts_completed_has_result"
@@ -147,6 +150,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_180229) do
     t.decimal "takedown_defense", precision: 4, scale: 3, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_fighters_on_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["ufcstats_id"], name: "index_fighters_on_ufcstats_id", unique: true
     t.check_constraint "draws >= 0", name: "fighters_draws_non_negative"
     t.check_constraint "losses >= 0", name: "fighters_losses_non_negative"

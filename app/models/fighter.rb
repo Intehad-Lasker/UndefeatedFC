@@ -25,6 +25,21 @@ class Fighter < ApplicationRecord
     total_knockdowns: "COALESCE(SUM(appearances.knockdowns), 0)"
   }.freeze
 
+  # Name or nickname search that tolerates typos: substring matches (ILIKE) plus
+  # trigram word similarity (<%), which compares the query with the closest part
+  # of the name, so "ferriera" finds "Tomas Ferreira". Best matches first; the
+  # GIN trigram index serves both conditions. Threshold: config/database.yml.
+  scope :search, ->(query) {
+    term = query.to_s.squish
+    if term.empty?
+      none
+    else
+      where("fighters.name ILIKE :like OR fighters.nickname ILIKE :like OR :term <% fighters.name",
+        like: "%#{sanitize_sql_like(term)}%", term: term)
+        .order(Arel.sql(sanitize_sql_array([ "word_similarity(?, fighters.name) DESC, fighters.name", term ])))
+    end
+  }
+
   # Everyone who fought at least once in this weight class during this era.
   scope :in_pool, ->(weight_class:, era:) {
     where(id: Appearance.with_era.where(bouts: { weight_class_id: weight_class }, eras: { id: era }).select(:fighter_id))

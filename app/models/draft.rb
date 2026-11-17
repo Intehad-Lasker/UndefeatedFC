@@ -19,6 +19,8 @@ class Draft < ApplicationRecord
 
   scope :with_rounds, -> { includes(rounds: %i[weight_class era fighter]) }
 
+  def played_by?(player_id) = player_id.present? && self.player_id == player_id
+
   def record = completed? ? "#{wins}-#{losses}" : nil
   def undefeated? = completed? && losses.zero?
 

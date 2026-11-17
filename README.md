@@ -45,6 +45,11 @@ the game is playable before the scraper has run. To load real data instead, star
 from an empty fighters table and follow [scraper/README.md](scraper/README.md). See
 [docs/data-model.md](docs/data-model.md) for the schema.
 
+## API
+
+The game is served as a JSON API under `/api/v1`: meta, drafts, spins, picks
+and fighter search. See [docs/api.md](docs/api.md).
+
 ## Tests and checks
 
 ```bash
@@ -61,5 +66,5 @@ CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
 ```
 app/, config/, db/, test/   Rails application
 scraper/                    Python package that loads UFCStats data (see scraper/README.md)
-docs/                       roadmap, data model and architecture decision records (ADRs)
+docs/                       roadmap, data model, API reference and architecture decision records (ADRs)
 ```
