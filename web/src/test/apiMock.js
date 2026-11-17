@@ -6,6 +6,7 @@ export const API_METHODS = [
   'meta', 'createDraft', 'getDraft', 'spin', 'pick', 'searchFighters', 'getFighter',
   'currentSession', 'signIn', 'signUp', 'signOut', 'requestPasswordReset', 'myDrafts',
   'dailyChallenge', 'startDailyChallenge', 'leaderboard',
+  'createMatch', 'getMatch', 'joinMatch', 'matchPick',
 ]
 
 export function apiMock() {

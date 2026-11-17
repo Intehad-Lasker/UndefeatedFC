@@ -8,6 +8,16 @@ export default function HomePage() {
   const [starting, setStarting] = useState(false)
   const [error, setError] = useState(null)
 
+  async function startMatch() {
+    setError(null)
+    try {
+      const match = await api.createMatch()
+      navigate(`/matches/${match.id}`)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   async function startDraft() {
     setStarting(true)
     setError(null)
@@ -36,9 +46,14 @@ export default function HomePage() {
           so know your fighters.
         </li>
       </ol>
-      <button type="button" className="button button--primary" onClick={startDraft} disabled={starting}>
-        {starting ? 'Starting…' : 'Start a draft'}
-      </button>
+      <div className="home__actions">
+        <button type="button" className="button button--primary" onClick={startDraft} disabled={starting}>
+          {starting ? 'Starting…' : 'Start a draft'}
+        </button>
+        <button type="button" className="button" onClick={startMatch}>
+          Challenge a friend
+        </button>
+      </div>
       {error && (
         <p role="alert" className="error">
           {error}
