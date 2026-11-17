@@ -16,6 +16,7 @@ export default function AccountMenu() {
 
   return (
     <span className="account">
+      <Link to="/me/drafts">My drafts</Link>
       <span className="account__name">{user.display_name}</span>
       <button
         type="button"

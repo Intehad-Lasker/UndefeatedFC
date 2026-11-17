@@ -672,3 +672,49 @@ select {
 .auth__links {
   color: var(--muted);
 }
+
+/* Draft history */
+.history__list {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  max-width: 40rem;
+}
+
+.history__item {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.history__item:hover {
+  border-color: var(--muted);
+}
+
+.history__item--undefeated {
+  border-color: var(--gold);
+}
+
+.history__date {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.history__summary {
+  font-weight: 700;
+}
+
+.history__overall {
+  font-weight: 900;
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+}

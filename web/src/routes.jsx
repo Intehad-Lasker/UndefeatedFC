@@ -5,6 +5,7 @@ import FighterPage from './pages/FighterPage.jsx'
 import FightersPage from './pages/FightersPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import HomePage from './pages/HomePage.jsx'
+import MyDraftsPage from './pages/MyDraftsPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import SignInPage from './pages/SignInPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
@@ -24,6 +25,7 @@ export const routes = [
       { path: 'drafts/:draftId', element: <DraftPage /> },
       { path: 'fighters', element: <FightersPage /> },
       { path: 'fighters/:fighterId', element: <FighterPage /> },
+      { path: 'me/drafts', element: <MyDraftsPage /> },
       { path: 'sign-in', element: <SignInPage /> },
       { path: 'sign-up', element: <SignUpPage /> },
       { path: 'forgot-password', element: <ForgotPasswordPage /> },
