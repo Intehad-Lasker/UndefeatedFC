@@ -1,0 +1,26 @@
+<% content_for :title, "Dashboard" %>
+<h1>Dashboard</h1>
+
+<section class="admin__cards">
+  <% @counts.each do |label, count| %>
+    <div class="admin__card">
+      <span class="admin__card-value"><%= number_with_delimiter(count) %></span>
+      <span class="admin__card-label"><%= label.to_s.humanize %></span>
+    </div>
+  <% end %>
+</section>
+
+<h2>Today's challenge</h2>
+<p><%= @today.day.to_fs(:long) %>: <%= pluralize(@today_attempts, "attempt") %>, <%= @today_finished %> finished.</p>
+
+<h2>Latest data load</h2>
+<% if @latest_run %>
+  <p>
+    <strong><%= @latest_run.status.humanize %></strong>
+    <%= time_ago_in_words(@latest_run.started_at) %> ago:
+    <%= pluralize(@latest_run.events_count, "event") %>, <%= pluralize(@latest_run.bouts_count, "bout") %>,
+    <%= pluralize(@latest_run.fighters_count, "fighter") %>.
+  </p>
+<% else %>
+  <p>The scraper has not run yet.</p>
+<% end %>

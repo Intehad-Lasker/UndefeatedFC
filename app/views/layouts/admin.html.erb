@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Admin" %> · UndefeatedFC</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="admin">
+    <header class="admin__header">
+      <%= link_to "UndefeatedFC admin", admin_root_path, class: "admin__brand" %>
+      <nav class="admin__nav">
+        <%= link_to "Dashboard", admin_root_path %>
+      </nav>
+      <% if Current.user %>
+        <span class="admin__user">
+          <%= Current.user.display_name %>
+          <%= button_to "Sign out", session_path, method: :delete, class: "admin__signout" %>
+        </span>
+      <% end %>
+    </header>
+    <main class="admin__main">
+      <% flash.each do |type, message| %>
+        <p class="admin__flash admin__flash--<%= type %>"><%= message %></p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>
