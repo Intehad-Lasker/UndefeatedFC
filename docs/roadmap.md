@@ -18,10 +18,10 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Synthetic development data
 
 ## M2 — Scraper (Python)
-- [ ] Rate-limited, cached fetcher
-- [ ] Parsers for events, bouts and fighter profiles
-- [ ] Idempotent Postgres loader
-- [ ] Command-line interface and CI
+- [x] Rate-limited, cached fetcher
+- [x] Parsers for events, bouts and fighter profiles
+- [x] Idempotent Postgres loader
+- [x] Command-line interface and CI
 
 ## M3 — Ratings engine
 - [ ] Six skills: Striking, Power, Wrestling, Submissions, Defense, Chin
