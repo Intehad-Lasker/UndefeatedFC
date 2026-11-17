@@ -12,3 +12,8 @@ wrestler_wrestling:
   fighter: wrestler
   skill: wrestling
   value: 97
+
+grappler_submissions:
+  fighter: grappler
+  skill: submissions
+  value: 99

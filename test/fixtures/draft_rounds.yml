@@ -1,0 +1,16 @@
+# drafts(:fresh) has one picked round and one open round.
+fresh_first:
+  draft: fresh
+  number: 1
+  weight_class: lightweight
+  era: modern
+  fighter: striker
+  slot: striking
+  rating: 95
+  picked_at: 2026-11-17 10:00:00
+
+fresh_second:
+  draft: fresh
+  number: 2
+  weight_class: lightweight
+  era: mainstream
