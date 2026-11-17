@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       get "meta" => "meta#show"
       resources :drafts, only: %i[create show] do
         resources :rounds, only: :create
+        resources :picks, only: :create
       end
     end
   end
