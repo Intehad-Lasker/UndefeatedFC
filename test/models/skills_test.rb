@@ -8,6 +8,11 @@ class SkillsTest < ActiveSupport::TestCase
     assert_equal Skills.keys.uniq, Skills.keys
   end
 
+  test "find returns a registered skill by string or symbol key" do
+    assert_instance_of Skills::Striking, Skills.find("striking")
+    assert_instance_of Skills::Striking, Skills.find(:striking)
+  end
+
   test "find raises for an unknown key" do
     assert_raises(Skills::UnknownSkill) { Skills.find("telekinesis") }
   end

@@ -4,7 +4,9 @@
 module Skills
   class UnknownSkill < ArgumentError; end
 
-  ALL = [].freeze
+  ALL = [
+    Striking.new
+  ].freeze
 
   def self.all = ALL
   def self.keys = ALL.map(&:key)
