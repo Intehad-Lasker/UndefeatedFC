@@ -30,6 +30,10 @@ Rails.application.routes.draw do
       resources :fighters, only: %i[index show]
       get "leaderboards/daily" => "leaderboards#daily"
       get "leaderboards/all_time" => "leaderboards#all_time"
+      resources :matches, only: %i[create show] do
+        post :join, on: :member
+        post :picks, on: :member, action: :pick
+      end
       resource :daily_challenge, only: :show do
         resource :attempt, only: :create, controller: "daily_challenge_attempts"
       end
