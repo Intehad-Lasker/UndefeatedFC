@@ -12,6 +12,11 @@ module Api
 
       PLAYER_COOKIE = :player_id
 
+      # The same cookie-backed sessions as the HTML side (Rails' authentication
+      # generator). Guests can play, so endpoints opt in to requiring a user.
+      include Authentication
+      allow_unauthenticated_access
+
       protect_from_forgery with: :exception
 
       before_action { request.format = :json }
@@ -43,6 +48,13 @@ module Api
         SecureRandom.uuid.tap do |id|
           cookies.signed.permanent[PLAYER_COOKIE] = { value: id, httponly: true, same_site: :lax }
         end
+      end
+
+      def current_user = (Current.user if authenticated?)
+
+      # Called by require_authentication; JSON clients get a 401, not a redirect.
+      def request_authentication
+        render_error :unauthorized, "unauthorized", "Sign in to do that."
       end
 
       def render_error(status, code, message)
