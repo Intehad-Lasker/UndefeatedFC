@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { api } from '../api/client.js'
+import DailyChallengeCard from '../components/DailyChallengeCard.jsx'
 
 export default function HomePage() {
   const navigate = useNavigate()
@@ -43,6 +44,7 @@ export default function HomePage() {
           {error}
         </p>
       )}
+      <DailyChallengeCard />
     </section>
   )
 }

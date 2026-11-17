@@ -45,6 +45,7 @@ export default function DraftPage() {
     <section className="draft">
       <header className="draft__header">
         <h1>{phase === 'complete' ? 'Title run complete' : `Round ${Math.min(picksMade + 1, meta.rules.rounds)} of ${meta.rules.rounds}`}</h1>
+        {draft.daily_challenge && <p className="badge">Daily challenge · {draft.daily_challenge.day}</p>}
         {!draft.owned && <p className="notice">You're viewing someone else's draft.</p>}
       </header>
 
