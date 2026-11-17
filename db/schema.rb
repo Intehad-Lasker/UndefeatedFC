@@ -10,8 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_074022) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "weight_classes", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "limit_lbs"
+    t.integer "position", null: false
+    t.boolean "spinnable", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_weight_classes_on_name", unique: true
+    t.index ["position"], name: "index_weight_classes_on_position", unique: true
+    t.check_constraint "limit_lbs IS NULL OR limit_lbs > 0", name: "weight_classes_limit_lbs_positive"
+  end
 end
