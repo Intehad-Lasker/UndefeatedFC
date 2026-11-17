@@ -23,6 +23,9 @@
 
 /public/assets
 
+# React build output (npm run build in web/)
+/public/app
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
