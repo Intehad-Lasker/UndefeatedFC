@@ -8,7 +8,7 @@ module Api
       def render_draft(id, status: :ok)
         @draft = Draft.with_rounds.find(id)
         @pool = pool_for(@draft)
-        @owned = @draft.played_by?(current_player_id)
+        @owned = @draft.played_by?(current_player_id, current_user)
         render "api/v1/drafts/show", status: status
       end
 

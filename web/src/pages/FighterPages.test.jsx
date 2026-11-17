@@ -3,12 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { api } from '../api/client.js'
 import { fighter } from '../test/fixtures.js'
+import { stubDefaults } from '../test/apiMock.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
-vi.mock('../api/client.js', () => ({ api: { searchFighters: vi.fn(), getFighter: vi.fn() } }))
+vi.mock('../api/client.js', async () => (await import('../test/apiMock.js')).apiMock())
 
 beforeEach(() => {
   vi.resetAllMocks()
+  stubDefaults(api)
 })
 
 test('searching shows matching fighters linked to their profiles', async () => {

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -6,7 +8,10 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       get "meta" => "meta#show"
-      resources :drafts, only: %i[create show] do
+      resource :session, only: %i[show create destroy]
+      resources :users, only: :create
+      resources :passwords, only: :create
+      resources :drafts, only: %i[index create show] do
         resources :rounds, only: :create
         resources :picks, only: :create
       end

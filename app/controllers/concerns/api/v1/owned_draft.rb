@@ -13,7 +13,7 @@ module Api
 
       def set_owned_draft
         @draft = Draft.find(params[:draft_id])
-        return if @draft.played_by?(current_player_id)
+        return if @draft.played_by?(current_player_id, current_user)
 
         raise BaseController::Forbidden, "Only the player who started this draft can change it."
       end

@@ -92,6 +92,26 @@ class Api::V1::BaseControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "the CSRF token also arrives in a cookie the React app can read" do
+    with_probe_routes do
+      get "/probe/player"
+
+      assert cookies["CSRF-TOKEN"].present?
+      assert_no_match(/httponly/i, response.headers["Set-Cookie"].to_s.split("\n").find { |c| c.start_with?("CSRF-TOKEN") })
+    end
+  end
+
+  test "writes that echo the CSRF cookie are accepted" do
+    with_forgery_protection do
+      with_probe_routes do
+        get "/probe/player"
+        post "/probe/write", headers: { "X-CSRF-Token" => CGI.unescape(cookies["CSRF-TOKEN"]) }
+
+        assert_response :ok
+      end
+    end
+  end
+
   test "writes that echo the CSRF token are accepted" do
     with_forgery_protection do
       with_probe_routes do

@@ -18,7 +18,10 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetchMock)
 })
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  document.cookie = 'CSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
+})
 
 test('GET requests hit the versioned API and return parsed JSON', async () => {
   fetchMock.mockReturnValueOnce(reply(200, { skills: [] }))
@@ -88,4 +91,39 @@ test('errors without a JSON body still get a readable message', async () => {
   const error = await api.meta().catch((e) => e)
 
   expect(error).toMatchObject({ status: 502, code: 'http_error', message: 'Something went wrong (HTTP 502).' })
+})
+
+test('prefers the CSRF-TOKEN cookie, which always matches the current session cookie', async () => {
+  document.cookie = 'CSRF-TOKEN=from%2Bcookie; path=/'
+  fetchMock
+    .mockReturnValueOnce(reply(200, {}, { 'X-CSRF-Token': 'from-header' }))
+    .mockReturnValueOnce(reply(201, { id: 'abc' }))
+
+  await api.meta()
+  await api.createDraft()
+
+  expect(fetchMock.mock.calls[1][1].headers['X-CSRF-Token']).toBe('from+cookie')
+})
+
+test('validation errors carry per-field messages', async () => {
+  fetchMock
+    .mockReturnValueOnce(reply(200, {}, { 'X-CSRF-Token': 't' }))
+    .mockReturnValueOnce(
+      reply(422, { error: { code: 'validation_failed', message: 'Display name has already been taken', fields: { display_name: ['taken'] } } }),
+    )
+
+  const error = await api.signUp({ display_name: 'x' }).catch((e) => e)
+
+  expect(error.fields).toEqual({ display_name: ['taken'] })
+})
+
+test('sign out sends a DELETE with the CSRF token', async () => {
+  fetchMock
+    .mockReturnValueOnce(reply(200, {}, { 'X-CSRF-Token': 'del' }))
+    .mockReturnValueOnce(Promise.resolve(new Response(null, { status: 204 })))
+
+  await api.signOut()
+
+  const [url, options] = fetchMock.mock.calls[1]
+  expect([url, options.method, options.headers['X-CSRF-Token']]).toEqual(['/api/v1/session', 'DELETE', 'del'])
 })

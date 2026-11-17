@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router'
+import AccountMenu from './AccountMenu.jsx'
 
 export default function AppShell() {
   return (
@@ -12,6 +13,7 @@ export default function AppShell() {
             Play
           </NavLink>
           <NavLink to="/fighters">Fighters</NavLink>
+          <AccountMenu />
         </nav>
       </header>
       <main className="shell__main">

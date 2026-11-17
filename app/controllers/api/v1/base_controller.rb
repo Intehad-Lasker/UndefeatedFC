@@ -11,6 +11,12 @@ module Api
       class Forbidden < StandardError; end
 
       PLAYER_COOKIE = :player_id
+      CSRF_COOKIE = "CSRF-TOKEN"
+
+      # The same cookie-backed sessions as the HTML side (Rails' authentication
+      # generator). Guests can play, so endpoints opt in to requiring a user.
+      include Authentication
+      allow_unauthenticated_access
 
       protect_from_forgery with: :exception
 
@@ -32,6 +38,10 @@ module Api
       rescue_from Drafts::RuleViolation do |error|
         render_error :unprocessable_content, "rule_violation", error.message
       end
+      rescue_from ActiveRecord::RecordInvalid do |error|
+        render_error :unprocessable_content, "validation_failed", error.record.errors.full_messages.to_sentence,
+          fields: error.record.errors.to_hash(true)
+      end
 
       private
 
@@ -45,12 +55,30 @@ module Api
         end
       end
 
-      def render_error(status, code, message)
-        render json: { error: { code: code, message: message } }, status: status
+      def current_user = (Current.user if authenticated?)
+
+      def sign_in(user)
+        start_new_session_for(user)
+        Draft.claim_for(user, player_id: current_player_id)
       end
 
+      # Called by require_authentication; JSON clients get a 401, not a redirect.
+      def request_authentication
+        render_error :unauthorized, "unauthorized", "Sign in to do that."
+      end
+
+      def render_error(status, code, message, **details)
+        render json: { error: { code: code, message: message, **details } }, status: status
+      end
+
+      # The token goes out twice: as a header for API clients, and as a
+      # JS-readable cookie for the React app. The cookie arrives in the same
+      # response as the session cookie, so the pair can never disagree, even
+      # when a new browser's first requests race to create a session.
       def expose_csrf_token
-        response.set_header("X-CSRF-Token", form_authenticity_token)
+        token = form_authenticity_token
+        response.set_header("X-CSRF-Token", token)
+        cookies[CSRF_COOKIE] = { value: token, same_site: :strict, secure: request.ssl? }
       end
     end
   end
