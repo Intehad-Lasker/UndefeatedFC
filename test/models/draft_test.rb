@@ -46,3 +46,42 @@ class DraftTest < ActiveSupport::TestCase
     assert_equal [], Draft.create!.fight_log
   end
 end
+
+class DraftStateTest < ActiveSupport::TestCase
+  def draft = Draft.with_rounds.find(drafts(:fresh).id)
+
+  test "open_round is the spun but unpicked round" do
+    assert_equal draft_rounds(:fresh_second), draft.open_round
+  end
+
+  test "tracks filled and open slots" do
+    assert_equal [ "striking" ], draft.filled_slots
+    assert_equal Skills.keys - [ "striking" ], draft.open_slots
+    assert_not draft.all_slots_filled?
+  end
+
+  test "tracks drafted fighters and pools already spun" do
+    assert_equal [ fighters(:striker).id ], draft.drafted_fighter_ids
+    assert_equal [ [ weight_classes(:lightweight).id, eras(:modern).id ], [ weight_classes(:lightweight).id, eras(:mainstream).id ] ], draft.used_pools
+  end
+
+  test "next_round_number follows the last round" do
+    assert_equal 3, draft.next_round_number
+    assert_equal 1, Draft.with_rounds.find(Draft.create!.id).next_round_number
+  end
+
+  test "lock_with_rounds! reloads rounds without tripping strict loading" do
+    record = Draft.find(drafts(:fresh).id)
+
+    Draft.transaction do
+      record.lock_with_rounds!
+
+      assert_equal 2, record.rounds.size
+      assert_equal eras(:mainstream), record.open_round.era
+    end
+  end
+
+  test "reading rounds without loading them raises under strict loading" do
+    assert_raises(ActiveRecord::StrictLoadingViolationError) { Draft.find(drafts(:fresh).id).open_round }
+  end
+end
