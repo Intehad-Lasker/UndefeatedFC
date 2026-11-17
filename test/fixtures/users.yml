@@ -2,8 +2,10 @@
 
 one:
   email_address: one@example.com
+  display_name: FirstPlayer
   password_digest: <%= password_digest %>
 
 two:
   email_address: two@example.com
+  display_name: SecondPlayer
   password_digest: <%= password_digest %>

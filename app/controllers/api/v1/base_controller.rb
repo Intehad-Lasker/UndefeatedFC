@@ -37,6 +37,10 @@ module Api
       rescue_from Drafts::RuleViolation do |error|
         render_error :unprocessable_content, "rule_violation", error.message
       end
+      rescue_from ActiveRecord::RecordInvalid do |error|
+        render_error :unprocessable_content, "validation_failed", error.record.errors.full_messages.to_sentence,
+          fields: error.record.errors.to_hash(true)
+      end
 
       private
 
@@ -57,8 +61,8 @@ module Api
         render_error :unauthorized, "unauthorized", "Sign in to do that."
       end
 
-      def render_error(status, code, message)
-        render json: { error: { code: code, message: message } }, status: status
+      def render_error(status, code, message, **details)
+        render json: { error: { code: code, message: message, **details } }, status: status
       end
 
       def expose_csrf_token

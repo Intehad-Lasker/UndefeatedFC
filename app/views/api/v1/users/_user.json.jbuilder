@@ -1,1 +1,1 @@
-json.call(user, :id, :email_address)
+json.call(user, :id, :email_address, :display_name)

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "meta" => "meta#show"
       resource :session, only: %i[show create destroy]
+      resources :users, only: :create
       resources :drafts, only: %i[create show] do
         resources :rounds, only: :create
         resources :picks, only: :create
