@@ -3,10 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vi } from 'vitest'
 import { api } from '../api/client.js'
 import { resetMetaForTests } from '../api/useMeta.js'
-import { draftPicking, draftReady, fighter, meta } from '../test/fixtures.js'
+import { draftCompleted, draftPicking, draftReady, fighter, meta } from '../test/fixtures.js'
 import { renderRoute } from '../test/renderRoute.jsx'
 
-vi.mock('../api/client.js', () => ({ api: { meta: vi.fn(), getDraft: vi.fn(), spin: vi.fn(), pick: vi.fn() } }))
+vi.mock('../api/client.js', () => ({
+  api: { meta: vi.fn(), getDraft: vi.fn(), spin: vi.fn(), pick: vi.fn(), createDraft: vi.fn() },
+}))
 
 beforeEach(() => {
   vi.resetAllMocks()
@@ -102,4 +104,20 @@ test('a refused pick keeps the pool open and shows why', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('Your Power slot is already filled.')
   const pool = screen.getByRole('list', { name: 'Fighters in this pool' })
   expect(within(pool).getByRole('button', { name: /Bea Garrow/ })).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('a finished draft shows the title run and can start another', async () => {
+  vi.mocked(api.getDraft).mockResolvedValue(draftCompleted)
+  vi.mocked(api.createDraft).mockResolvedValue({ id: 'd2' })
+  const { router } = renderRoute('/drafts/d1')
+
+  expect(await screen.findByRole('heading', { name: 'Title run complete' })).toBeInTheDocument()
+  const result = screen.getByRole('region', { name: 'Title run result' })
+  expect(within(result).getByText('Undefeated')).toBeInTheDocument()
+  expect(within(result).getByText('15-0')).toBeInTheDocument()
+  expect(screen.queryByLabelText('Weight class')).not.toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('button', { name: 'Play again' }))
+
+  expect(router.state.location.pathname).toBe('/drafts/d2')
 })

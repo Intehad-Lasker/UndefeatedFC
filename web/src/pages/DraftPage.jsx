@@ -1,6 +1,8 @@
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
+import { api } from '../api/client.js'
 import { useMeta } from '../api/useMeta.js'
 import FighterPool from '../components/FighterPool.jsx'
+import ResultCard from '../components/ResultCard.jsx'
 import SlotBoard from '../components/SlotBoard.jsx'
 import SpinWheels from '../components/SpinWheels.jsx'
 import { selectedFighter } from '../draft/draftReducer.js'
@@ -8,9 +10,19 @@ import { useDraft } from '../draft/useDraft.js'
 
 export default function DraftPage() {
   const { draftId } = useParams()
+  const navigate = useNavigate()
   const meta = useMeta()
   const { state, spin, finishReveal, selectFighter, pick } = useDraft(draftId)
   const { draft, phase, error } = state
+
+  async function playAgain() {
+    try {
+      const next = await api.createDraft()
+      navigate(`/drafts/${next.id}`)
+    } catch {
+      navigate('/')
+    }
+  }
 
   if (phase === 'error') {
     return (
@@ -44,14 +56,16 @@ export default function DraftPage() {
         lastPickSlot={state.lastPick?.slot}
       />
 
-      <SpinWheels
-        weightClasses={meta.weight_classes}
-        eras={meta.eras}
-        result={result}
-        spinning={phase === 'spinning'}
-        revealing={phase === 'revealing'}
-        onRevealed={finishReveal}
-      />
+      {phase !== 'complete' && (
+        <SpinWheels
+          weightClasses={meta.weight_classes}
+          eras={meta.eras}
+          result={result}
+          spinning={phase === 'spinning'}
+          revealing={phase === 'revealing'}
+          onRevealed={finishReveal}
+        />
+      )}
 
       {draft.owned && phase === 'ready' && (
         <button type="button" className="button button--primary" onClick={spin}>
@@ -71,6 +85,10 @@ export default function DraftPage() {
             disabled={!draft.owned || phase === 'submitting'}
           />
         </>
+      )}
+
+      {phase === 'complete' && (
+        <ResultCard result={draft.result} shareUrl={window.location.href} onPlayAgain={playAgain} />
       )}
 
       {error && (

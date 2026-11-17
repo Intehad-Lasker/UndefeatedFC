@@ -55,3 +55,17 @@ const openRound = {
 
 export const draftReady = { id: 'd1', status: 'in_progress', owned: true, slots: emptySlots, rounds: [], open_round: null, result: null }
 export const draftPicking = { ...draftReady, rounds: [openRound], open_round: openRound }
+
+export const draftCompleted = {
+  ...draftReady,
+  status: 'completed',
+  slots: draftReady.slots.map((slot, index) => ({ ...slot, round_number: index + 1, rating: 90, fighter: fighter(index + 1, `Fighter ${index + 1}`) })),
+  result: {
+    overall: 90,
+    wins: 15,
+    losses: 0,
+    record: '15-0',
+    undefeated: true,
+    fights: Array.from({ length: 15 }, (_, i) => ({ number: i + 1, opponent_rating: 55 + i * 2, win_probability: 0.9, won: true })),
+  },
+}
