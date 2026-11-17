@@ -100,3 +100,58 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
         run: bin/rails db:test:prepare test
+
+  scraper:
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/undefeated_fc_scraper_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/undefeated_fc_scraper_test
+
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      # The scraper writes to tables Rails owns, so its tests run against the real schema.
+      - name: Load the Rails schema
+        run: bin/rails db:create db:schema:load
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: scraper/pyproject.toml
+
+      - name: Install scraper
+        working-directory: scraper
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        working-directory: scraper
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Test
+        working-directory: scraper
+        run: pytest

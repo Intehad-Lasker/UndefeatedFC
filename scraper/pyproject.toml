@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ufc-scraper"
+version = "0.1.0"
+description = "Loads UFCStats fight data into the UndefeatedFC PostgreSQL database."
+requires-python = ">=3.12"
+dependencies = [
+  "beautifulsoup4>=4.12",
+  "psycopg[binary]>=3.2",
+  "requests>=2.32",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+ufc-scraper = "ufc_scraper.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ufc_scraper*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

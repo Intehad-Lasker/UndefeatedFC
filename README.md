@@ -41,7 +41,8 @@ bin/setup
 http://localhost:3000. Use `bin/setup --skip-server` to only prepare.
 
 In development, `bin/rails db:seed` also creates invented fighters and bouts so
-the game is playable before the scraper has run. See
+the game is playable before the scraper has run. To load real data instead, start
+from an empty fighters table and follow [scraper/README.md](scraper/README.md). See
 [docs/data-model.md](docs/data-model.md) for the schema.
 
 ## Tests and checks
@@ -59,5 +60,6 @@ CI runs the same checks on every pull request (`.github/workflows/ci.yml`).
 
 ```
 app/, config/, db/, test/   Rails application
+scraper/                    Python package that loads UFCStats data (see scraper/README.md)
 docs/                       roadmap, data model and architecture decision records (ADRs)
 ```
