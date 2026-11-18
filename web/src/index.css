@@ -814,3 +814,61 @@ a.button {
   color: var(--gold);
   font-weight: 900;
 }
+
+/* Head-to-head */
+.home__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.invite {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  max-width: 36rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.invite__url {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  background: var(--surface-2);
+}
+
+.room {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.room__turn {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.room__boards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}
+
+.room__board h2 {
+  margin-top: 0;
+}
+
+.room:has(.pick-tray) {
+  padding-bottom: 9rem;
+}
+
+@media (min-width: 60rem) {
+  .room:has(.pick-tray) {
+    padding-bottom: 0;
+  }
+}

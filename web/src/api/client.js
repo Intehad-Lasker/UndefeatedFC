@@ -85,6 +85,10 @@ export const api = {
   dailyChallenge: () => get('/daily_challenge'),
   startDailyChallenge: () => post('/daily_challenge/attempt'),
   leaderboard: (board) => get(`/leaderboards/${board}`),
+  createMatch: () => post('/matches'),
+  getMatch: (id) => get(`/matches/${id}`),
+  joinMatch: (id) => post(`/matches/${id}/join`),
+  matchPick: (id, fighterId, slot) => post(`/matches/${id}/picks`, { pick: { fighter_id: fighterId, slot } }),
 }
 
 // Test hook: forget the token between tests.

@@ -7,6 +7,7 @@ class Api::V1::BaseControllerTest < ActionDispatch::IntegrationTest
     def rule = raise(Drafts::RuleViolation, "Spin before picking a fighter.")
     def forbidden = raise(Forbidden, "Only the player who started this draft can change it.")
     def player = render(json: { player_id: current_player_id })
+    def mint = render(json: { player_id: current_player_id! })
     def write = render(json: { ok: true })
   end
 
@@ -19,6 +20,7 @@ class Api::V1::BaseControllerTest < ActionDispatch::IntegrationTest
           get "probe/#{action}", controller: "api/v1/base_controller_test/probe", action: action
         end
         post "probe/write", controller: "api/v1/base_controller_test/probe", action: "write"
+        post "probe/mint", controller: "api/v1/base_controller_test/probe", action: "mint"
       end
       yield
     end
@@ -62,14 +64,25 @@ class Api::V1::BaseControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "a browser keeps the same anonymous player id" do
+  test "reading never mints a player id" do
     with_probe_routes do
       get "/probe/player"
+
+      assert_nil response.parsed_body["player_id"]
+      assert_nil cookies[:player_id].presence
+    end
+  end
+
+  test "creating mints an id once and the browser keeps it" do
+    with_probe_routes do
+      post "/probe/mint"
       first = response.parsed_body["player_id"]
+      post "/probe/mint"
+      second = response.parsed_body["player_id"]
       get "/probe/player"
 
       assert_match(/\A\h{8}-/, first)
-      assert_equal first, response.parsed_body["player_id"]
+      assert_equal [ first, first ], [ second, response.parsed_body["player_id"] ]
     end
   end
 

@@ -181,6 +181,26 @@ Connect to `/cable` and subscribe to `LeaderboardChannel` with
 receive `{ "board": "daily", "day": "2026-11-17" }` (or `{ "board": "all_time" }`):
 refetch that leaderboard. Guests may connect.
 
+### Head-to-head matches
+
+| Method and path | Result |
+|---|---|
+| `POST /api/v1/matches` | `201`, a new match with you in seat 1 (rate limited like drafts) |
+| `GET /api/v1/matches/:id` | The match: `status` (`waiting`, `drafting`, `completed`), `your_seat`, `current_seat`, `round`, `players`, the round's `pool` (fighters without ratings), both `boards` (ratings revealed), and `result` |
+| `POST /api/v1/matches/:id/join` | Takes seat 2 and starts the draft; returns your existing seat if you're already in; `422` if full |
+| `POST /api/v1/matches/:id/picks` | `{ "pick": { "fighter_id", "slot" } }` on your turn; `403` if you're not a player; `422` out of turn, slot filled, fighter taken or not in the pool |
+
+The match id is the invite link. The six round pools are fixed when the match
+is created; players alternate picks in snake order (1, 2, 2, 1, ...). After the
+twelfth pick the builds fight up to five rounds (first to three wins).
+
+Subscribe to `MatchChannel` with `{ "id": "<match id>" }` to be told when a
+player joins or picks, then refetch the match.
+
+Player ids are only created by actions that create something (a draft, a
+challenge attempt, a match, a join). Reads never mint one, so a new browser's
+parallel first requests can't swap its identity.
+
 ## Example session
 
 ```bash

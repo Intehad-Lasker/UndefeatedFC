@@ -6,6 +6,7 @@ import FightersPage from './pages/FightersPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LeaderboardPage from './pages/LeaderboardPage.jsx'
+import MatchPage from './pages/MatchPage.jsx'
 import MyDraftsPage from './pages/MyDraftsPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import SignInPage from './pages/SignInPage.jsx'
@@ -27,6 +28,7 @@ export const routes = [
       { path: 'fighters', element: <FightersPage /> },
       { path: 'fighters/:fighterId', element: <FighterPage /> },
       { path: 'leaderboard', element: <LeaderboardPage /> },
+      { path: 'matches/:matchId', element: <MatchPage /> },
       { path: 'me/drafts', element: <MyDraftsPage /> },
       { path: 'sign-in', element: <SignInPage /> },
       { path: 'sign-up', element: <SignUpPage /> },
