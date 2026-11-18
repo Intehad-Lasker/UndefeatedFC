@@ -62,5 +62,7 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "selenium-webdriver"
+  # Drives Chrome over the DevTools protocol, so there is no chromedriver to
+  # keep in step with the installed browser version.
+  gem "cuprite"
 end

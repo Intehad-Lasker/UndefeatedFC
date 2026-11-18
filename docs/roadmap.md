@@ -66,6 +66,12 @@ Each milestone ships as one pull request. Tags mark playable releases.
 - [x] Head-to-head fight simulation
 
 ## M12 — Ship (v1.0.0)
-- [ ] End-to-end browser test
-- [ ] Content security policy
-- [ ] Deploy configuration
+- [x] End-to-end browser test
+- [x] Content security policy
+- [x] Deploy configuration
+- [x] README with architecture diagram and screenshots
+
+## Next
+- Load the full UFCStats history with the scraper and tune the rating curve
+  against real fighters
+- Deploy to a public host
